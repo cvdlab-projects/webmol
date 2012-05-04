@@ -1,22 +1,30 @@
 <html>
 
 <head>
-<title>Random Spheres</title>
+<title>WEB Mol</title>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
 <script type="text/javascript" src="js/PhiloGL.js"></script>
 <script type="text/javascript" src="js/glMatrix.js"></script>
 <script type="text/javascript" src="js/camera.js"></script>
+<script type="text/javascript" src="js/atom.js"></script>
 <script type="text/javascript" src="js/protein.js"></script>
+<script type="text/javascript" src="js/proteinReader.js"></script>
+<script type="text/javascript" src="js/renderizer.js"></script>
 <script type="text/javascript" src="js/eventHandler.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 
 <body onload="webGLStart();">
-<canvas id="canvasid" style="border: none;" width="640" height="480"></canvas>
+<h1>WEB Mol Project</h1>
+<h3>Visualization:
+<select id="renderizerType" onChange="renderizerTypeChanged()">
+  <option value="ballandstick">Ball and Stick</option>
+  <option value="vanderwaals">Van der Waals</option>
+  <option value="stick">Stick</option>
+</select>
+</h3>
+<input type="checkbox" id="lighting" checked /> Use lighting</input>
 <br/>
-<button onclick="relocate()" >Relocate Spheres</button>
-<br/>
-<div id="debug">Debug Div</div>
-<input type="checkbox" id="lighting" checked /> Use lighting<br/>
+<canvas id="webMolCanvas" float="left" width="640" height="480"></canvas>
 </body>
 </html>

@@ -1,22 +1,24 @@
-
-  var protein = new Protein();
+  var $id = function(d) { return document.getElementById(d); };
   var eventHandler = new EventHandler();
+  var proteinReader = new ProteinReader();
+  var renderizer = new Renderizer();
 
-  function relocate(){
-    renderizerProtein();
+  function renderizerTypeChanged(){
+    var sel = $id('renderizerType').options;
+    for(i=0; i<sel.length; i++){
+      if(sel[i].selected){
+        renderizer.renderize(protein, i);
+      }
+    }
   }
 
   function renderizerProtein(){
-    var numberOfAtoms = 10;
-    protein.randomize(numberOfAtoms);
-    protein.renderize();
-    NScamera.setTarget(protein.barycenter); 
+    protein = proteinReader.proteinSample();
+    renderizer.renderize(protein, RenderizerType.ballAndStick);
   }
 
   function webGLStart() {
-    var pos, $id = function(d) { return document.getElementById(d); };
-
-    PhiloGL('canvasid', {
+    PhiloGL('webMolCanvas', {
       events: {
         onDragStart: function(e) {
           eventHandler.onDragStart(e);
@@ -83,8 +85,8 @@
               b: 0.8
             },
             direction: {
-              x: -1.0,
-              y: -1.0,
+              x: 0.0,
+              y: 0.0,
               z: -1.0
             }
           };

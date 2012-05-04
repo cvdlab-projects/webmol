@@ -8,7 +8,7 @@ NScamera.velocityY = 0;
 NScamera.velocityZ = 0;
 NScamera.dampening = 0.85;
 NScamera.minDistance = 10;
-NScamera.maxDistance = 50;
+NScamera.maxDistance = 2000;
 NScamera.stepPan = 10;
 
 // Per utilizzare la camera al meglio bisogna tunare i parametri minDistance, maxDistance, distance, center, stepPan
@@ -19,12 +19,12 @@ vec3.angle = function(v1,v2) {
 }
 
 NScamera.setTarget = function(target) {
-	NScamera.center = vec3.create(target.x, target.y, target.z);
-	NScamera.initCenter = vec3.create(target.x, target.y, target.z);
+	NScamera.center = target;
+	NScamera.initCenter = target;
 }
 
 NScamera.reset = function(){
-	NScamera.center = vec3.create(this.initCenter[0], this.initCenter[1], this.initCenter[2]);
+	NScamera.center = vec3.create([this.initCenter[0], this.initCenter[1], this.initCenter[2]]);
 	NScamera.rot = quat4.create([0,0,0,1]);
 	NScamera.velocityX = 0;
 	NScamera.velocityY = 0;
