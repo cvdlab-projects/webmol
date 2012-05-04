@@ -4,6 +4,107 @@
 <title>WEB Mol</title>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
+<script id="shader-fs" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 lightWeighting;
+
+uniform bool hasTexture1;
+uniform sampler2D sampler1;
+uniform vec4 colorLine;
+uniform bool renderLine;
+
+uniform bool enablePicking;
+uniform vec3 pickColor;
+
+uniform bool hasFog;
+uniform vec3 fogColor;
+
+uniform float fogNear;
+uniform float fogFar;
+
+void main(){
+  if(renderLine){
+  	gl_FragColor = colorLine;
+  }
+  else{
+	  if(!hasTexture1) {
+	    gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);
+	  } else {
+	    gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);
+	  }
+
+	  if(enablePicking) {
+	    gl_FragColor = vec4(pickColor, 1.0);
+	  }
+
+	  if (hasFog) {
+	    float depth = gl_FragCoord.z / gl_FragCoord.w;
+	    float fogFactor = smoothstep(fogNear, fogFar, depth);
+	    gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
+	  }  
+	}
+}
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+#define LIGHT_MAX 50
+
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec4 color;
+attribute vec2 texCoord1;
+
+uniform mat4 worldMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 worldInverseTransposeMatrix;
+
+uniform bool enableLights;
+uniform vec3 ambientColor;
+uniform vec3 directionalColor;
+uniform vec3 lightingDirection;
+
+uniform vec3 pointLocation[LIGHT_MAX];
+uniform vec3 pointColor[LIGHT_MAX];
+uniform int numberPoints;
+
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 lightWeighting;
+
+void main(void) {
+  vec4 mvPosition = worldMatrix * vec4(position, 1.0);
+  
+  if(!enableLights) {
+    lightWeighting = vec3(1.0, 1.0, 1.0);
+  } else {
+    vec3 plightDirection;
+    vec3 pointWeight = vec3(0.0, 0.0, 0.0);
+    vec4 transformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);
+    float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
+    for (int i = 0; i < LIGHT_MAX; i++) {
+      if (i < numberPoints) {
+        plightDirection = normalize((viewMatrix * vec4(pointLocation[i], 1.0)).xyz - mvPosition.xyz);
+        pointWeight += max(dot(transformedNormal.xyz, plightDirection), 0.0) * pointColor[i];
+      } else {
+        break;
+      }
+    }
+
+    lightWeighting = ambientColor + (directionalColor * directionalLightWeighting) + pointWeight;
+  }
+  
+  vColor = color;
+  vTexCoord = texCoord1;
+  gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
+}
+</script>
+
 <script type="text/javascript" src="js/PhiloGL.js"></script>
 <script type="text/javascript" src="js/glMatrix.js"></script>
 <script type="text/javascript" src="js/camera.js"></script>
@@ -14,6 +115,8 @@
 <script type="text/javascript" src="js/eventHandler.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 
+
+
 <body onload="webGLStart();">
 <h1>WEB Mol Project</h1>
 <h3>Visualization:
@@ -21,10 +124,11 @@
   <option value="ballandstick">Ball and Stick</option>
   <option value="vanderwaals">Van der Waals</option>
   <option value="stick">Stick</option>
+  <option value="lines">Lines</option>
 </select>
 </h3>
-<input type="checkbox" id="lighting" checked /> Use lighting</input>
 <br/>
+<div id = "debug"></div>
 <canvas id="webMolCanvas" float="left" width="640" height="480"></canvas>
 </body>
 </html>

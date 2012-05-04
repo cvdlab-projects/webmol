@@ -26,20 +26,20 @@
       }
       return minAtomRadius;
     }
-
-  Protein.prototype.barycenter = function(){
-    function max(array,prop){
+function max(array,prop){
       var values = array.map(function (el){
         return el[prop];
       });
       return Math.max.apply(Math,values);
     }
-    function min(array,prop){
+function min(array,prop){
       var values = array.map(function (el){
         return el[prop];
       });
       return Math.min.apply(Math,values);
     }
+  Protein.prototype.barycenter = function(){
+    
         var maxx=max(this.atoms,'x');
         var minx=min(this.atoms,'x');
 
@@ -50,6 +50,12 @@
         var minz=min(this.atoms,'z');
 
       return vec3.create([(maxx+minx)/2,(maxy+miny)/2,(maxz+minz)/2]);
+    }
+    Protein.prototype.maxDistance = function(){
+      var maxx=max(this.atoms,'x');
+        var maxy=max(this.atoms,'y');
+        var maxz=max(this.atoms,'z');
+        return Math.max.apply(Math,[maxx,maxy,maxz]);
     }
  
 

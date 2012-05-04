@@ -1,4 +1,4 @@
-var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 } ;
+var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 ,"lines" : 3 } ;
 
 function Renderizer(){
 	this.init();
@@ -18,7 +18,10 @@ Renderizer.prototype.clear = function(){
 Renderizer.prototype.renderize = function(protein, type){
   this.clear();
   this.protein = protein;
+        program.setUniform('colorLine', [1,0,0,1]);
+      
 
+  program.setUniform('renderLine', 0);
   if(type == RenderizerType.ballAndStick){
     for(i in protein.atoms){
       this.ballandstick_drawAtom(protein.atoms[i]);
@@ -26,14 +29,13 @@ Renderizer.prototype.renderize = function(protein, type){
     for (i in protein.bonds){
       this.ballandstick_drawBond(protein.bonds[i]);
       }
-    } else if(type == RenderizerType.vanDerWaals){
+    } 
+  else if(type == RenderizerType.vanDerWaals){
     for(i in protein.atoms){
       this.vanderwaals_drawAtom(protein.atoms[i]);
     }
-    for (i in protein.bonds){
-      this.vanderwaals_drawBond(protein.bonds[i]);
-      }
-    } else if(type == RenderizerType.stick){
+    } 
+  else if(type == RenderizerType.stick){
     for(i in protein.atoms){
       this.stick_drawAtom(protein.atoms[i]);
     }
@@ -41,13 +43,30 @@ Renderizer.prototype.renderize = function(protein, type){
       this.stick_drawBond(protein.bonds[i]);
       }
     } 
-
+  else if(type == RenderizerType.lines){
+    program.setUniform('renderLine', 1);
+    for (i in protein.bonds){
+      this.lines_drawBond(protein.bonds[i]);
+      }
+    }
   for(i in this.models){
       scene.add(this.models[i]);
     }
     NScamera.setTarget(this.protein.barycenter()); 
+    var maxD = this.protein.maxDistance();
+    NScamera.distance=maxD*4;
+    NScamera.maxDistance = maxD*8;
   }
-
+Renderizer.prototype.render = function(type){
+  
+  if(type == RenderizerType.lines){
+    for (i in protein.bonds)
+      //if(i==1)
+        this.lines_drawBond(protein.bonds[i]);
+  }
+  else scene.render();
+  
+}
 Renderizer.prototype.createBond = function(v1, v2, col, numeroLegami, radius){
     
     var sub = v1.sub(v2);
@@ -151,10 +170,41 @@ Renderizer.prototype.vanderwaals_drawAtom = function(atom){
     this.createAtom(atom, atom.vanDerWaalsRadius);
   }
 
-  Renderizer.prototype.vanderwaals_drawBond = function(bond) {
-    // Van Der Waals non deve disegnare i legami
-  }
-
 // VANDERWAALS VISUALIZATION END
+
+// LINES VISUALIZATION
+
+Renderizer.prototype.lines_drawBond = function(bond) {
+  
+    var atom1 = this.protein.atoms[bond.idSource];
+    var atom2 = this.protein.atoms[bond.idTarget];
+    var legami = bond.bondType;
+
+    var v1 = new PhiloGL.Vec3(atom1.x, atom1.y, atom1.z);
+    var v2 = new PhiloGL.Vec3(atom2.x, atom2.y, atom2.z);
+    var midpoint = v1.add(v2).scale(0.5);
+    
+    program.setBuffers({
+        'line': {
+          attribute: 'position',
+          value: new Float32Array([atom1.x,atom1.y,atom1.z,  midpoint.x,midpoint.y,midpoint.z]),
+          size: 3
+        },
+        'line2': {
+          attribute: 'position',
+          value: new Float32Array([midpoint.x,midpoint.y,midpoint.z,atom2.x,atom2.y,atom2.z]),
+          size: 3
+        }
+      });
+      
+      program.setUniform('colorLine', atom1.color);
+      program.setBuffer('line');
+      gl.drawArrays(gl.LINES, 0, 2);
+      program.setUniform('colorLine', atom2.color);
+      program.setBuffer('line2');
+      gl.drawArrays(gl.LINES, 0, 2);
+}
+
+// LINES VISUALIZATION END
 
   

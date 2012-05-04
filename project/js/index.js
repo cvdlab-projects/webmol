@@ -2,11 +2,12 @@
   var eventHandler = new EventHandler();
   var proteinReader = new ProteinReader();
   var renderizer = new Renderizer();
-
+  var type =  RenderizerType.ballAndStick;
   function renderizerTypeChanged(){
     var sel = $id('renderizerType').options;
     for(i=0; i<sel.length; i++){
       if(sel[i].selected){
+        type = i;
         renderizer.renderize(protein, i);
       }
     }
@@ -14,11 +15,16 @@
 
   function renderizerProtein(){
     protein = proteinReader.proteinSample();
-    renderizer.renderize(protein, RenderizerType.ballAndStick);
+    renderizer.renderize(protein, type);
   }
 
   function webGLStart() {
     PhiloGL('webMolCanvas', {
+      program: {
+      from: 'ids',
+      vs: 'shader-vs',
+      fs: 'shader-fs'
+    },
       events: {
         onDragStart: function(e) {
           eventHandler.onDragStart(e);
@@ -50,6 +56,7 @@
         gl.viewport(0, 0, canvas.width, canvas.height);
 
         renderizerProtein();
+        //program = PhiloGL.Program.fromShaderIds('shader-vs','shader-fs');
 
         draw();
 
@@ -72,7 +79,7 @@
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
           var lights = scene.config.lights;
-          lights.enable = $id('lighting').checked;
+          lights.enable = 1;
           lights.ambient = {
             r: 0.2,
             g: 0.2,
@@ -85,13 +92,15 @@
               b: 0.8
             },
             direction: {
-              x: 0.0,
-              y: 0.0,
+              x: -1.0,
+              y: -1.0,
               z: -1.0
             }
           };
 
-          scene.render();
+          program.setUniform('worldMatrix', camera.view);
+          program.setUniform('projectionMatrix', camera.projection);
+          renderizer.render(type);
           PhiloGL.Fx.requestAnimationFrame(draw);
           
         }

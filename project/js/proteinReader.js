@@ -12,16 +12,19 @@
     ProteinReader.prototype.proteinSample = function() {
       var protein = new Protein();
       var colorArr = [[1,1,1,1], [1,0,1,1], [1,1,0,1],[1,0,0,1], [0,1,0,1], [0,0,1,1]];
-      var example_mol = [ [2,2,0],[4,2,0],[6,0,0],[4,-2,0],[2,-2,0],[0,0,0],[0,4,0],[6,4,0],[6,-4,0],[0,-4,0] ];
+      var example_mol = [ [2,2,0],[4,2,0],[6,0,0],[4,-2,0],[2,-2,0],[0,0,0],[0,4,0],[6,4,0],[6,-4,0],[0,-4,0],
+      [2,2,5],[4,2,5],[6,0,5],[4,-2,5],[2,-2,5],[0,0,5],[0,4,5],[6,4,5],[6,-4,5],[0,-4,5] ];
       var radius = 0.5;
-      var vanDerWaalsRadius = 2;
+      var vanDerWaalsRadius = 3;
       for(i in example_mol){
         pos = example_mol[i];
         var atom =new Atom(i,"",pos[0],pos[1],pos[2],colorArr[i%colorArr.length],radius,vanDerWaalsRadius);
         protein.addAtom(atom);
       }
 
-      var example_bond = [ [0,1,2],[1,2,1],[2,3,3],[3,4,1],[4,5,1],[5,0,1],[0,6,1],[1,7,1],[3,8,1],[4,9,1] ];
+      var example_bond = [ [0,1,2],[1,2,1],[2,3,3],[3,4,1],[4,5,1],[5,0,1],[0,6,1],[1,7,1],[3,8,1],[4,9,1] ,
+      [10,11,2],[11,12,1],[12,13,3],[13,14,1],[14,15,1],[15,10,1],[10,16,1],[11,17,1],[13,18,1],[14,19,1]
+      ,[2,13,3],[3,14,1],[4,15,1],[5,10,1],[0,16,1],[1,17,1],[3,18,1],[1,19,1]];
       
       for (i in example_bond){
         var b = example_bond[i];

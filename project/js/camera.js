@@ -7,7 +7,7 @@ NScamera.velocityX = 0;
 NScamera.velocityY = 0;
 NScamera.velocityZ = 0;
 NScamera.dampening = 0.85;
-NScamera.minDistance = 10;
+NScamera.minDistance = 1;
 NScamera.maxDistance = 2000;
 NScamera.stepPan = 10;
 
