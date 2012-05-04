@@ -19,13 +19,20 @@ vec3.angle = function(v1,v2) {
 }
 
 NScamera.setTarget = function(target) {
-	NScamera.center = target;
-	NScamera.initCenter = target;
+	NScamera.center = vec3.create([target[0], target[1], target[2]]);
+	NScamera.initCenter = vec3.create([target[0], target[1], target[2]]);
+}
+
+NScamera.setDistance = function(distance) {
+	NScamera.distance = distance;
+	NScamera.maxDistance = distance*2;
+	NScamera.initDistance = distance;
 }
 
 NScamera.reset = function(){
 	NScamera.center = vec3.create([this.initCenter[0], this.initCenter[1], this.initCenter[2]]);
 	NScamera.rot = quat4.create([0,0,0,1]);
+	this.distance = this.initDistance;
 	NScamera.velocityX = 0;
 	NScamera.velocityY = 0;
 	NScamera.velocityZ = 0;

@@ -42,6 +42,9 @@
 		    case 'r':
 		      NScamera.reset();
 		      break;
+		    case 'v':
+		      renderizer.showAxis = !renderizer.showAxis;
+		      break;
 		    default:
 		      break;
 		  }

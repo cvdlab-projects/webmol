@@ -3,6 +3,7 @@
   var proteinReader = new ProteinReader();
   var renderizer = new Renderizer();
   var type =  RenderizerType.ballAndStick;
+
   function renderizerTypeChanged(){
     var sel = $id('renderizerType').options;
     for(i=0; i<sel.length; i++){
@@ -13,8 +14,37 @@
     }
   }
 
+  function proteinChanged(){
+     NScamera.reset();
+     var sel = $id('proteinSelected').options;
+     for(i=0; i<sel.length; i++){
+      if(sel[i].selected){
+        if(i==0){
+          protein = proteinReader.alanine();
+          renderizer.renderize(protein, type);
+        }
+        else if(i==1){
+          protein = proteinReader.arginine();
+          renderizer.renderize(protein, type);
+        }
+        else if(i==2){
+          protein = proteinReader.cysteine();
+          renderizer.renderize(protein, type);
+        }
+        else if(i==3){
+          protein = proteinReader.tryptophan();
+          renderizer.renderize(protein, type);
+        }
+        else if(i==4){
+          protein = proteinReader.proteinSample();
+          renderizer.renderize(protein, type);
+        }
+      }
+    }
+  }
   function renderizerProtein(){
-    protein = proteinReader.proteinSample();
+    //protein = proteinReader.proteinSample();
+    protein = proteinReader.alanine();
     renderizer.renderize(protein, type);
   }
 
@@ -92,8 +122,8 @@
               b: 0.8
             },
             direction: {
-              x: -1.0,
-              y: -1.0,
+              x: 0.0,
+              y: 0.0,
               z: -1.0
             }
           };

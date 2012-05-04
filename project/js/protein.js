@@ -26,6 +26,7 @@
       }
       return minAtomRadius;
     }
+    
 function max(array,prop){
       var values = array.map(function (el){
         return el[prop];
@@ -51,6 +52,7 @@ function min(array,prop){
 
       return vec3.create([(maxx+minx)/2,(maxy+miny)/2,(maxz+minz)/2]);
     }
+
     Protein.prototype.maxDistance = function(){
       var maxx=max(this.atoms,'x');
         var maxy=max(this.atoms,'y');

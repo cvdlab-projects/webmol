@@ -13,10 +13,11 @@ varying vec4 vColor;
 varying vec2 vTexCoord;
 varying vec3 lightWeighting;
 
+uniform vec4 color;
 uniform bool hasTexture1;
 uniform sampler2D sampler1;
-uniform vec4 colorLine;
-uniform bool renderLine;
+
+uniform bool nolights;
 
 uniform bool enablePicking;
 uniform vec3 pickColor;
@@ -28,12 +29,13 @@ uniform float fogNear;
 uniform float fogFar;
 
 void main(){
-  if(renderLine){
-  	gl_FragColor = colorLine;
-  }
-  else{
 	  if(!hasTexture1) {
-	    gl_FragColor = vec4(vColor.rgb * lightWeighting, vColor.a);
+      if(!nolights){
+	     gl_FragColor = vec4(color.rgb * lightWeighting, color.a);
+     }
+      else{
+        gl_FragColor = vec4(color.rgb, color.a);
+      }
 	  } else {
 	    gl_FragColor = vec4(texture2D(sampler1, vec2(vTexCoord.s, vTexCoord.t)).rgb * lightWeighting, 1.0);
 	  }
@@ -47,7 +49,6 @@ void main(){
 	    float fogFactor = smoothstep(fogNear, fogFar, depth);
 	    gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
 	  }  
-	}
 }
 </script>
 
@@ -125,6 +126,15 @@ void main(void) {
   <option value="vanderwaals">Van der Waals</option>
   <option value="stick">Stick</option>
   <option value="lines">Lines</option>
+</select>
+</h3>
+<h3>Amino Acids:
+<select id="proteinSelected" onChange="proteinChanged()">
+  <option value="Alanine">Alanine</option>
+  <option value="Arginine">Arginine</option>
+  <option value="Cysteine">Cysteine</option>
+  <option value="Tryptophan">Tryptophan</option>
+  <option value="PrototypeSample">PrototypeSample</option>
 </select>
 </h3>
 <br/>
