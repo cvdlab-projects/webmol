@@ -151,7 +151,7 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
 
 Renderizer.prototype.drawAxis = function(){
   if(this.showAxis){
-    var c = this.protein.barycenter();
+    var c = NScamera.center;
     var orig = new PhiloGL.Vec3(c[0], c[1], c[2]);
     var xAxis = new PhiloGL.Vec3(1, 0, 0);
     var yAxis = new PhiloGL.Vec3(0, 1, 0);
