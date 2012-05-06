@@ -207,6 +207,15 @@
       return protein;
     }
 
+    ProteinReader.prototype.spherePicking = function() {
+      var protein = new Protein();
+      var atom = new Atom(1,"C",0.5,1.2,0.6,color,rad,vanDerWaalsRad);
+      var atom2 = new Atom(2,"C",2.5,0.2,0.6,color,rad,vanDerWaalsRad);
+      protein.addAtom(atom);
+      protein.addAtom(atom2);
+      return protein;
+    }
+
     ProteinReader.prototype.proteinSample = function() {
       var protein = new Protein();
       var colorArr = [[1,1,1,1], [1,0,1,1], [1,1,0,1],[1,0,0,1], [0,1,0,1], [0,0,1,1]];

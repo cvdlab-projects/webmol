@@ -17,7 +17,7 @@ Renderizer.prototype.clear = function(){
     this.init();
   }
 
-Renderizer.prototype.renderize = function(protein, type){
+Renderizer.prototype.renderize = function(protein, type, setDistance){
   this.clear();
   this.protein = protein;
 
@@ -51,10 +51,13 @@ Renderizer.prototype.renderize = function(protein, type){
       scene.add(this.models[i]);
     }
     NScamera.setTarget(this.protein.barycenter());
-    if(this.maxDistance!=0)
-      NScamera.setDistance(this.maxDistance*4);
-    else
-      NScamera.setDistance(this.protein.maxDistance()*4);
+
+    if(setDistance || setDistance==undefined){
+      if(this.maxDistance!=0)
+        NScamera.setDistance(this.maxDistance*4);
+      else
+        NScamera.setDistance(this.protein.maxDistance()*4);
+    }
   }
 
 Renderizer.prototype.render = function(type){
@@ -66,11 +69,11 @@ Renderizer.prototype.render = function(type){
 
   this.drawAxis();
   scene.render();
-
 }
 
 Renderizer.prototype.drawAtom = function(atom, radius){
     var atomSphere = new PhiloGL.O3D.Sphere({
+            pickable: true,
             nlat: 30,
             nlong: 30,
             radius: radius,
@@ -87,6 +90,7 @@ Renderizer.prototype.drawAtom = function(atom, radius){
       y: atom.y,
       z: atom.z
     };
+
     atomSphere.update();
     this.models.push(atomSphere);
 

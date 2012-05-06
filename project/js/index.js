@@ -2,17 +2,19 @@
   var eventHandler = new EventHandler();
   var proteinReader = new ProteinReader();
   var renderizer = new Renderizer();
-  var type =  RenderizerType.ballAndStick;
+
+  var type = RenderizerType.ballAndStick;
 
   function renderizerTypeChanged(){
     var sel = $id('renderizerType').options;
     for(i=0; i<sel.length; i++){
       if(sel[i].selected){
         type = i;
-        renderizer.renderize(protein, i);
+        renderizer.renderize(protein, i, false);
       }
     }
   }
+
 
   function proteinChanged(){
      NScamera.reset();
@@ -35,15 +37,23 @@
           protein = proteinReader.tryptophan();
           renderizer.renderize(protein, type);
         }
-        else if(i==4){
-          protein = proteinReader.proteinSample();
-          renderizer.renderize(protein, type);
-        }
       }
     }
   }
+
+  function onResize( element, callback ){
+    var elementHeight = element.height,
+        elementWidth = element.width;
+    setInterval(function(){
+        if( element.height !== elementHeight || element.width !== elementWidth ){
+          elementHeight = element.height;
+          elementWidth = element.width;
+          callback();
+        }
+    }, 300);
+  }
+
   function renderizerProtein(){
-    //protein = proteinReader.proteinSample();
     protein = proteinReader.alanine();
     renderizer.renderize(protein, type);
   }
@@ -79,14 +89,16 @@
             canvas = app.canvas,
             camera = app.camera
 
+        var element = $id('webMolCanvas')[0];
+        onResize( canvas, function(){ gl.viewport(0,0,canvas.width,canvas.height); } );
+
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
         gl.viewport(0, 0, canvas.width, canvas.height);
-
+        
         renderizerProtein();
-        //program = PhiloGL.Program.fromShaderIds('shader-vs','shader-fs');
 
         draw();
 
