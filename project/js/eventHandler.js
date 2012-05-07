@@ -1,5 +1,7 @@
 		// Classe per la gestione degli Eventi
 
+		var animation = new Animation();
+
 		function EventHandler(){
 		  this.pos = {x: 0, y: 0};
 		}
@@ -48,6 +50,23 @@
 		document.addEventListener('mozfullscreenchange', on_fullscreen_change);
 		document.addEventListener('webkitfullscreenchange', on_fullscreen_change);
 
+		var selectedModel;
+		EventHandler.prototype.onClick = function(e, model){
+			if(selectedModel || model==selectedModel){
+				var c = selectedModel.uniforms.color;
+				selectedModel.uniforms.color = [c[0],c[1],c[2],1.0];
+				selectedModel = undefined;
+			}
+			if(model && model!=selectedModel){
+	            var c = model.uniforms.color;
+	            model.uniforms.color = [c[0],c[1],c[2],0.8];
+	            
+	            animation.goToDistance(NScamera.distance, model.radius*10);
+	            animation.goToCenter(model.position);
+	            selectedModel = model;
+          	}
+		}
+
 		EventHandler.prototype.onDragStart = function(e){
 			var cX = e.x + canvas.width/2;
 		    var cY = e.y + canvas.height/2;
@@ -85,6 +104,9 @@
 		      break;
 		    case 'r':
 		      NScamera.reset();
+		      animation.resetRotation();
+		      animation.goToDistance(NScamera.distance, NScamera.initDistance);
+	          animation.goToCenter(new PhiloGL.Vec3(NScamera.initCenter[0], NScamera.initCenter[1], NScamera.initCenter[2] ));
 		      break;
 		    case 'v':
 		      renderizer.showAxis = !renderizer.showAxis;

@@ -74,8 +74,8 @@ Renderizer.prototype.render = function(type){
 Renderizer.prototype.drawAtom = function(atom, radius){
     var atomSphere = new PhiloGL.O3D.Sphere({
             pickable: true,
-            nlat: 30,
-            nlong: 30,
+            nlat: 15,
+            nlong: 15,
             radius: radius,
             colors: atom.color,
             uniforms: {

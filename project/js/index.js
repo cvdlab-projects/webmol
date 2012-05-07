@@ -15,7 +15,6 @@
     }
   }
 
-
   function proteinChanged(){
      NScamera.reset();
      var sel = $id('proteinSelected').options;
@@ -54,7 +53,7 @@
   }
 
   function renderizerProtein(){
-    protein = proteinReader.alanine();
+    protein = proteinReader.load();
     renderizer.renderize(protein, type);
   }
 
@@ -66,6 +65,10 @@
       fs: 'shader-fs'
     },
       events: {
+        picking: true,
+        onRightClick: function(e, model){
+          eventHandler.onClick(e, model);
+        },
         onDragStart: function(e) {
           eventHandler.onDragStart(e);
         },
@@ -87,7 +90,8 @@
             program = app.program,
             scene = app.scene,
             canvas = app.canvas,
-            camera = app.camera
+            camera = app.camera,
+            view = new PhiloGL.Mat4();
 
         var element = $id('webMolCanvas')[0];
         onResize( canvas, function(){ gl.viewport(0,0,canvas.width,canvas.height); } );
@@ -103,20 +107,21 @@
         draw();
 
         function draw() {
-          var mvMatrix = new PhiloGL.Mat4();
-          mvMatrix.id();
+          view.id();
 
           NScamera.step();
-          NScamera.feed(mvMatrix);
-          
-          mvMatrix.$transpose();
+          NScamera.feed(view);
 
-          camera.projection = new PhiloGL.Mat4().perspective(camera.fov, camera.aspect, camera.near, camera.far);
-          
-          camera.view.set(mvMatrix[0],mvMatrix[1],mvMatrix[2],mvMatrix[3],
-                          mvMatrix[4],mvMatrix[5],mvMatrix[6],mvMatrix[7],
-                          mvMatrix[8],mvMatrix[9],mvMatrix[10],mvMatrix[11],
-                          mvMatrix[12],mvMatrix[13],mvMatrix[14],mvMatrix[15]);
+          //camera.view.id();
+          //camera.view.$mulMat4(mvMatrix);
+
+          view.$invert();
+
+          camera.position = new PhiloGL.Vec3(view[12],view[13],view[14]);
+          camera.target = NScamera.center;
+          camera.up = new PhiloGL.Vec3(view[4], view[5], view[6]);
+
+          camera.update();
 
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

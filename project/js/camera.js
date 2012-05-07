@@ -7,7 +7,7 @@ NScamera.velocityX = 0;
 NScamera.velocityY = 0;
 NScamera.velocityZ = 0;
 NScamera.dampening = 0.85;
-NScamera.minDistance = 1;
+NScamera.minDistance = 0;
 NScamera.maxDistance = 2000;
 NScamera.stepPan = 10;
 
@@ -30,9 +30,9 @@ NScamera.setDistance = function(distance) {
 }
 
 NScamera.reset = function(){
-	NScamera.center = vec3.create([this.initCenter[0], this.initCenter[1], this.initCenter[2]]);
-	NScamera.rot = quat4.create([0,0,0,1]);
-	this.distance = this.initDistance;
+	//NScamera.center = vec3.create([this.initCenter[0], this.initCenter[1], this.initCenter[2]]);
+	//NScamera.rot = quat4.create([0,0,0,1]);
+	//this.distance = this.initDistance;
 	NScamera.velocityX = 0;
 	NScamera.velocityY = 0;
 	NScamera.velocityZ = 0;
