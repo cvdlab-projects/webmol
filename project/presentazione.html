@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="" />
+  <title>WEBMOL</title>
+  <link rel="stylesheet" type="text/css" media="screen, projection, print"
+    href="slidy/slidy.css" />
+  <script src="slidy/slidy.js"
+    charset="utf-8" type="text/javascript"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">WEBMOL</h1>
+  <p>Antonio Gallo</p>
+  <p>Daniele D'Andrea</p>
+  <p>Federico Dell'Osso</p>
+  <p>Luca Insola</p>
+  <p>Marcin Kwiatkowski</p>
+  <br>
+  <ul>Website: <a href="http://www.webmol.altervista.org">www.webmol.altervista.org</a></ul>
+  <p class="date">Biomedical Informatics &amp; Computational Graphics 2012</p>
+</div>
+
+<div class="section slide level1" id="obiettivo">
+<h1>Obiettivo</h1>
+<p>Creare un visualizzatore di proteine in ambiente web a partire da informazioni ricavate dal Database PDB (Protein Data Bank)</p>
+<br>
+<h1>HTML5 e WebGL</h1>
+<li>Utilizzo della canvas, componente integrato in HTML5 per la visualizzazione di oggetti 2D/3D all'interno del browser</li>
+<li>Creazione di primitive grafiche (es: linee) tramite WebGL</li>
+<li>Creazione di modelli 3D grazie all'utilizzo di PhiloGL (WebGL framework 3D)</li>
+<li>Nessun bisogno di componenti aggiuntivi da installare da parte dell'utente</li>
+</div>
+
+<div class="section slide level1" id="funzionalita">
+<h1>Funzionalità</h1>
+<li>Visualizzazione delle proteine realizzata mediante composizione di forme geometriche tridimensionali primitive</li>
+<li>Navigazione della scena:</li>
+<ul>
+<ul><li>Rotazione della camera utilizzando il metodo dei quaternioni (per evitare il problema del "gimbal lock")</li></ul>
+<ul><li>Zoom in e Zoom out</li></ul>
+<ul><li>Navigazione panoramica della scena</li></ul>
+<ul><li>Reset della camera alla posizione iniziale</li></ul>
+<ul><li>Visualizzazione opzionale degli assi cartesiani</li></ul>
+<ul><li>Fullscreen</li></ul>
+</ul>
+</div>
+
+<div class="section slide level1" id="tipi-di-visualizzazione">
+<h1 id="biomedical-infographics">Tipi di visualizzazione</h1>
+<ul>
+<table>
+<tr><td width = "500px">
+<li>Balls and Sticks</li>
+<img src="images/ballandstick.png" width="250px" heigth="250px">
+<li>Van Der Waals Spheres</li>
+<img src="images/vanderwaals.png" width="250px" heigth="250px">
+</td><td>
+<li>Stick</li>
+<img src="images/stick.png" width="250px" heigth="250px">
+<li>Lines</li>
+<img src="images/lines.png" width="250px" heigth="250px">
+</td>
+</tr>
+</table>
+</ul>
+</div>
+
+<div class="section slide level1" id="sviluppi-futuri">
+<h1>Sviluppi Futuri</h1>
+<li>Caricamento delle proteine da appositi file in formato JSON</li>
+<li>Possibilità di interagire con gli oggetti per ricavare informazioni sugli atomi e sulla proteina</li>
+<li>Testing del visualizzatore su tutti i browser</li>
+<br>
+<h1>Demo</h1>
+<ul><a href="http://www.webmol.altervista.org" target="_blank">www.webmol.altervista.org</a></ul>
+</div>
+
+</body>
+</html>
