@@ -5,6 +5,23 @@
 
   var type = RenderizerType.ballAndStick;
 
+  function quality(){
+    if($id('low').checked){
+      renderizer.quality = 10;
+      renderizer.renderize(protein, type, false);
+    } else if($id('mid').checked){
+      renderizer.quality = 15;
+      renderizer.renderize(protein, type, false);
+    } else if($id('high').checked){
+      renderizer.quality = 30;
+      renderizer.renderize(protein, type, false);
+    }
+    else if($id('max').checked){
+      renderizer.quality = 50;
+      renderizer.renderize(protein, type, false);
+    }
+  }
+
   function renderizerTypeChanged(){
     var sel = $id('renderizerType').options;
     for(i=0; i<sel.length; i++){
@@ -53,7 +70,7 @@
   }
 
   function renderizerProtein(){
-    protein = proteinReader.load();
+    protein = proteinReader.alanine();
     renderizer.renderize(protein, type);
   }
 
@@ -66,7 +83,7 @@
     },
       events: {
         picking: true,
-        onRightClick: function(e, model){
+        onClick: function(e, model){
           eventHandler.onClick(e, model);
         },
         onDragStart: function(e) {
@@ -104,28 +121,7 @@
         
         renderizerProtein();
 
-        draw();
-
-        function draw() {
-          view.id();
-
-          NScamera.step();
-          NScamera.feed(view);
-
-          //camera.view.id();
-          //camera.view.$mulMat4(mvMatrix);
-
-          view.$invert();
-
-          camera.position = new PhiloGL.Vec3(view[12],view[13],view[14]);
-          camera.target = NScamera.center;
-          camera.up = new PhiloGL.Vec3(view[4], view[5], view[6]);
-
-          camera.update();
-
-          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-          var lights = scene.config.lights;
+        var lights = scene.config.lights;
           lights.enable = 1;
           lights.ambient = {
             r: 0.2,
@@ -145,11 +141,25 @@
             }
           };
 
-          program.setUniform('worldMatrix', camera.view);
-          program.setUniform('projectionMatrix', camera.projection);
+        draw();
+
+        function draw() {
+          view.id();
+
+          NScamera.step();
+          NScamera.feed(view);
+
+          //camera.view.id();
+          //camera.view.$mulMat4(mvMatrix);
+
+          view.$invert();
+
+          NScamera.update();
+
+          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
           renderizer.render(type);
           PhiloGL.Fx.requestAnimationFrame(draw);
-          
         }
       }
     });

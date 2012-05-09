@@ -107,7 +107,6 @@ void main(void) {
 </script>
 
 <script type="text/javascript" src="js/PhiloGL.js"></script>
-<script type="text/javascript" src="js/glMatrix.js"></script>
 <script type="text/javascript" src="js/animation.js"></script>
 <script type="text/javascript" src="js/camera.js"></script>
 <script type="text/javascript" src="js/atom.js"></script>
@@ -134,9 +133,34 @@ void main(void) {
   <option value="Cysteine">Cysteine</option>
   <option value="Tryptophan">Tryptophan</option>
 </select>
+</h3><h3>
+<label>Quality: </label>            
+<input type = "radio"
+       name = "quality"
+       id = "low"
+       onChange="quality()" />
+<label for = "low">Low</label>
+
+<input type = "radio"
+       name = "quality"
+       id = "mid"
+       checked = "checked"
+       onChange="quality()"/>
+<label for = "mid">Medium</label>
+
+<input type = "radio"
+       name = "quality"
+       id = "high"
+       onChange="quality()"/>
+<label for = "high">High</label>
+<input type = "radio"
+       name = "quality"
+       id = "max"
+       onChange="quality()"/>
+<label for = "max">Max</label>
 </h3>
-<br/>
 <div id = "debug"></div>
+<br/>
 <div style="float:left;">
 <table>
 <tr><td>

@@ -2,6 +2,7 @@ var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 ,"lines
 
 function Renderizer(){
   this.showAxis = false;
+  this.quality = 30;
 	this.init();
 }
 
@@ -50,13 +51,14 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
   for(i in this.models){
       scene.add(this.models[i]);
     }
-    NScamera.setTarget(this.protein.barycenter());
+    
 
     if(setDistance || setDistance==undefined){
+      NScamera.setTarget(this.protein.barycenter());
       if(this.maxDistance!=0)
-        NScamera.setDistance(this.maxDistance*4);
+        NScamera.setDistance(this.maxDistance*3);
       else
-        NScamera.setDistance(this.protein.maxDistance()*4);
+        NScamera.setDistance(this.protein.maxDistance()*3);
     }
   }
 
@@ -74,8 +76,8 @@ Renderizer.prototype.render = function(type){
 Renderizer.prototype.drawAtom = function(atom, radius){
     var atomSphere = new PhiloGL.O3D.Sphere({
             pickable: true,
-            nlat: 15,
-            nlong: 15,
+            nlat: this.quality,
+            nlong: this.quality,
             radius: radius,
             colors: atom.color,
             uniforms: {
@@ -83,6 +85,7 @@ Renderizer.prototype.drawAtom = function(atom, radius){
             }
         });
 
+    atomSphere.atom = atom;
     atomSphere.radius=radius;
     atomSphere.colors = atom.color;
     atomSphere.position = {
@@ -106,7 +109,7 @@ Renderizer.prototype.drawBond = function(v1, v2, col, numeroLegami, radius){
     for(l = 1; l<=numeroLegami; l++){
       var bond = new PhiloGL.O3D.Cylinder({
         radius: radius,
-        nradial: 30,
+        nradial: this.quality,
         height: hC,
         topCap: 1,
         bottomCap: 1,
@@ -149,6 +152,8 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
     gl.lineWidth(width);
     program.setUniform('color', color);
     program.setUniform('nolights', true);
+    program.setUniform('worldMatrix', camera.view);
+    program.setUniform('projectionMatrix', camera.projection);
     gl.drawArrays(gl.LINES, 0, 2);
     program.setUniform('nolights', false);
 }

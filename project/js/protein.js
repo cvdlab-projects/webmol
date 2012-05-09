@@ -50,7 +50,7 @@ function min(array,prop){
         var maxz=max(this.atoms,'z');
         var minz=min(this.atoms,'z');
 
-      return vec3.create([(maxx+minx)/2,(maxy+miny)/2,(maxz+minz)/2]);
+      return new PhiloGL.Vec3((maxx+minx)/2,(maxy+miny)/2,(maxz+minz)/2);
     }
 
     Protein.prototype.maxDistance = function(){

@@ -17,7 +17,8 @@
       var strAtom = "r_";
       var i = 1;
       var atom = model[strAtom+i];
-      while(atom["serial"]!=undefined && i<=818){
+      while(atom!=undefined //&& i<=818
+        ){
 
         if(atom["type"]=="ATOM"){
               protein.addAtom(new Atom(atom["serial"], atom["element"], atom["x"]/1, atom["y"]/1, atom["z"]/1, color, rad, vanDerWaalsRad));
@@ -38,7 +39,7 @@
       var protein = new Protein();
       
       protein.addAtom(new Atom(1, "N", 1.392, 0.899, 0.816,color,rad,vanDerWaalsRad));
-      protein.addAtom(new Atom(2, "CA", 0.232, 0.006, 1.027,color,rad,vanDerWaalsRad));
+      protein.addAtom(new Atom(2, "C", 0.232, 0.006, 1.027,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(3, "C", 0.415, -1.253, 0.215,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(4, "O", 0.220, -2.366, 0.676,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(5, "H", 2.312, 0.398, 1.085,color,rad,vanDerWaalsRad));
@@ -73,7 +74,7 @@
       var protein = new Protein();
       
       protein.addAtom(new Atom(1, "N", 0.581, 2.180, 1.470,color,rad,vanDerWaalsRad));
-      protein.addAtom(new Atom(2, "CA", 1.400, 0.974, 1.724,color,rad,vanDerWaalsRad));
+      protein.addAtom(new Atom(2, "C", 1.400, 0.974, 1.724,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(3, "C", 2.553, 0.934, 0.751,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(4, "O", 3.650, 0.494, 1.053,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(5, "H", 1.188, 3.073, 1.532,color,rad,vanDerWaalsRad));
@@ -132,7 +133,7 @@
       var protein = new Protein();
       
       protein.addAtom(new Atom(1, "N", 1.029, 2.090, -1.621,color,rad,vanDerWaalsRad));
-      protein.addAtom(new Atom(2, "CA", 1.902, 1.071, -0.996,color,rad,vanDerWaalsRad));
+      protein.addAtom(new Atom(2, "C", 1.902, 1.071, -0.996,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(3, "C", 2.935, 0.658, -2.015,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(4, "O", 4.136, 0.718, -1.802,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(5, "H", 0.309, 2.476, -0.914,color,rad,vanDerWaalsRad));
@@ -195,7 +196,7 @@
       var protein = new Protein();
 
       protein.addAtom(new Atom(1, "N", -1.053, 1.300, 0.614,color,rad,vanDerWaalsRad));
-      protein.addAtom(new Atom(2, "CA", -0.304, 0.032, 0.746,color,rad,vanDerWaalsRad));
+      protein.addAtom(new Atom(2, "C", -0.304, 0.032, 0.746,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(3, "C", 0.770, -0.014, -0.311,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(4, "O", 1.952, -0.167, -0.047,color,rad,vanDerWaalsRad));
       protein.addAtom(new Atom(5, "H", -1.805, 1.385, 1.386,color,rad,vanDerWaalsRad));

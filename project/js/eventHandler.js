@@ -52,6 +52,7 @@
 
 		var selectedModel;
 		EventHandler.prototype.onClick = function(e, model){
+			$id('debug').innerHTML = "";
 			if(selectedModel || model==selectedModel){
 				var c = selectedModel.uniforms.color;
 				selectedModel.uniforms.color = [c[0],c[1],c[2],1.0];
@@ -64,6 +65,8 @@
 	            animation.goToDistance(NScamera.distance, model.radius*10);
 	            animation.goToCenter(model.position);
 	            selectedModel = model;
+
+	            $id('debug').innerHTML = "SELECTED ELEMENT: "+model.atom.name;
           	}
 		}
 
