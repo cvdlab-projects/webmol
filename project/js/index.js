@@ -127,6 +127,10 @@
             g: 0.2,
             b: 0.2
           };
+
+          //lights.points = { position: { x: -1, y: 2, z: -1 }, color: { r: 0.2, g: 0.2, b: 0.2 } };
+          //lights.diffuse = { r: 0.2, g: 0.2, b: 0.2 };
+          //lights.specular = { r: 0.2, g: 0.2, b: 0.2 }; 
           lights.directional = {
             color: {
               r: 0.8,
