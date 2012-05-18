@@ -38,6 +38,37 @@
       return protein;
     }
 
+     ProteinReader.prototype.loadAminoAcids = function(json){
+      var protein = new Protein();
+
+      //var insuline = json;
+      var jsonParse = eval('('+json+')');
+      var model = jsonParse["MODEL_1"];
+      var strAtom = "r_";
+      var i = 1;
+      var j = 1;
+      var atom = model[strAtom+i];
+      while(atom!=undefined //&& i<=818
+        ){
+
+        if(atom["type"]=="ATOM"){
+              protein.addAtom(new Atom(atom["serial"], atom["element"], atom["x"]/1, atom["y"]/1, atom["z"]/1, color, rad, vanDerWaalsRad));
+        }
+        i++;
+        atom = model[strAtom+i];
+      }
+
+      for(z=1;z<i;z++){
+        var conect = jsonParse["CONECT_"+z];
+        for (z2=1;z2<4;z2++){
+            if (conect["serial_"+z2] !== "" || conect["serial"]-1 < conect["serial_"+z2]-1){
+                protein.addBond( new Bond(conect["serial"]-1, conect["serial_"+z2]-1, 1 ) );
+            }
+        }
+      }
+      return protein;
+    }
+
     // La seguente parte di codice dovrà essere cancellata. Per ora serve per renderizzare alcuni modelli di proteine in attesa che ci forniscano i file JSON.
 
 

@@ -46,4 +46,3 @@ aminoAcids['THR'] = proteinReader.loadAminoAcids(THR);
 aminoAcids['TRP'] = proteinReader.loadAminoAcids(TRP);
 aminoAcids['TYR'] = proteinReader.loadAminoAcids(TYR);
 aminoAcids['VAL'] = proteinReader.loadAminoAcids(VAL);
-

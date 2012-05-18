@@ -37,19 +37,19 @@
      for(i=0; i<sel.length; i++){
       if(sel[i].selected){
         if(i==0){
-          protein = proteinReader.alanine();
+          protein =  aminoAcids['ALA'];
           renderizer.renderize(protein, type);
         }
         else if(i==1){
-          protein = proteinReader.arginine();
+          protein = aminoAcids['ARG'];
           renderizer.renderize(protein, type);
         }
         else if(i==2){
-          protein = proteinReader.cysteine();
+          protein = aminoAcids['CYS'];
           renderizer.renderize(protein, type);
         }
         else if(i==3){
-          protein = proteinReader.tryptophan();
+          protein = aminoAcids['TRP'];
           renderizer.renderize(protein, type);
         }
       }
@@ -69,7 +69,7 @@
   }
 
   function renderizerProtein(){
-    protein = proteinReader.alanine();
+    protein = aminoAcids['ALA'];
     renderizer.renderize(protein, type);
   }
 
