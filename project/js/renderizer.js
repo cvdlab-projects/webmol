@@ -152,8 +152,6 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
     gl.lineWidth(width);
     program.setUniform('color', color);
     program.setUniform('nolights', true);
-    program.setUniform('worldMatrix', camera.view);
-    program.setUniform('projectionMatrix', camera.projection);
     gl.drawArrays(gl.LINES, 0, 2);
     program.setUniform('nolights', false);
 }

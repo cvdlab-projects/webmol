@@ -1,3 +1,4 @@
+    var proteinReader = new ProteinReader();
 
     function ProteinReader(){
     	
@@ -6,6 +7,12 @@
     var color = [1,1,0,1];
     var vanDerWaalsRad = 1.0;
     var rad = 0.4;
+
+    ProteinReader.prototype.loadAminoAcids = function(json){
+        var protein = new Protein();
+
+        return protein;
+    }
 
     ProteinReader.prototype.load = function(jsonPath){
     	var protein = new Protein();

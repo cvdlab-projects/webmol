@@ -1,8 +1,7 @@
   var $id = function(d) { return document.getElementById(d); };
   var eventHandler = new EventHandler();
-  var proteinReader = new ProteinReader();
   var renderizer = new Renderizer();
-
+  var originRotationOn=true;
   var type = RenderizerType.ballAndStick;
 
   function quality(){
@@ -158,6 +157,8 @@
 
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+          program.setUniform('worldMatrix', camera.view);
+          program.setUniform('projectionMatrix', camera.projection);
           renderizer.render(type);
           PhiloGL.Fx.requestAnimationFrame(draw);
         }
