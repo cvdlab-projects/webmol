@@ -32,10 +32,22 @@ function quat_multiplyVec3(q, v){
 };
 
 NScamera.update = function(){
-	camera.position = new PhiloGL.Vec3(view[12],view[13],view[14]);
-	camera.target = NScamera.center;
-	camera.up = new PhiloGL.Vec3(view[4], view[5], view[6]);
-	camera.update();
+	view.id();
+    NScamera.step();
+    NScamera.feed(view);
+	view.$invert();
+	var oldp = camera.position, oldt = camera.target, oldu = camera.up;
+	var p = new PhiloGL.Vec3(view[12],view[13],view[14]), t = NScamera.center, u = new PhiloGL.Vec3(view[4], view[5], view[6]);
+	
+	// Se cambia almeno una componente della camera, aggiorno la camera ed i piani della frustumCulling
+	if(oldp.distTo(p)!=0 || oldt.distTo(t)!=0 || oldu.distTo(u)!=0){
+		camera.position = p;
+		camera.target = t;
+		camera.up = u;
+		camera.update();
+		culling.updatePlanes(p, t, u);
+		renderizer.render(type);
+	}
 }
 
 NScamera.setTarget = function(target) {
@@ -45,7 +57,7 @@ NScamera.setTarget = function(target) {
 
 NScamera.setDistance = function(distance) {
 	NScamera.distance = distance;
-	NScamera.maxDistance = distance*2;
+	NScamera.maxDistance = distance*4;
 	NScamera.initDistance = distance;
 }
 

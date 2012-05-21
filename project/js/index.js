@@ -37,7 +37,7 @@
      for(i=0; i<sel.length; i++){
       if(sel[i].selected){
         if(i==0){
-          protein =  aminoAcids['ALA'];
+          protein = aminoAcids['ALA'];
           renderizer.renderize(protein, type);
         }
         else if(i==1){
@@ -52,20 +52,12 @@
           protein = aminoAcids['TRP'];
           renderizer.renderize(protein, type);
         }
+        else if(i==4){
+          protein = proteinReader.insuline();
+          renderizer.renderize(protein, type);
+        }
       }
     }
-  }
-
-  function onResize( element, callback ){
-    var elementHeight = element.height,
-        elementWidth = element.width;
-    setInterval(function(){
-        if( element.height !== elementHeight || element.width !== elementWidth ){
-          elementHeight = element.height;
-          elementWidth = element.width;
-          callback();
-        }
-    }, 300);
   }
 
   function renderizerProtein(){
@@ -80,6 +72,16 @@
       vs: 'shader-vs',
       fs: 'shader-fs'
     },
+    scene: {
+        lights: {
+          enable: true,
+          ambient: {
+            r: 0.4,
+            g: 0.4,
+            b: 0.4
+          }
+        }
+      },
       events: {
         picking: true,
         onClick: function(e, model){
@@ -107,11 +109,11 @@
             scene = app.scene,
             canvas = app.canvas,
             camera = app.camera,
-            view = new PhiloGL.Mat4();
+            view = new PhiloGL.Mat4(),
+            culling = new FrustumCulling(camera);
 
         var element = $id('webMolCanvas')[0];
-        onResize( canvas, function(){ gl.viewport(0,0,canvas.width,canvas.height); } );
-
+        
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
@@ -121,6 +123,28 @@
         renderizerProtein();
 
         var lights = scene.config.lights;
+        lights.points = [];
+
+        function createLightPoint(x, y, z, r, g, b, spec){
+           var l = new Object();
+           l.position = { x: x, y: y, z: z };
+           l.diffuse = { r: r, g: g, b: b };
+           if(spec==true){
+              l.specular = { r: 1, g: 1, b: 1 };
+           }
+           return l;
+        }
+
+        //var r1=g1=b1=0.2;
+        //var r=g=b=0.2;
+        
+        //lights.points.push(createLightPoint(5, 10, 0, r1, g1, b1, true));
+        /*lights.points.push(createLightPoint(0,-10,0, r, g, b));
+        lights.points.push(createLightPoint(0,0,10, r, g, b));
+        lights.points.push(createLightPoint(0,0,-10, r, g, b));
+        lights.points.push(createLightPoint(10,0,0, r, g, b));
+        lights.points.push(createLightPoint(-10,0,0, r, g, b)); */
+
           lights.enable = 1;
           lights.ambient = {
             r: 0.2,
@@ -128,9 +152,6 @@
             b: 0.2
           };
 
-          //lights.points = { position: { x: -1, y: 2, z: -1 }, color: { r: 0.2, g: 0.2, b: 0.2 } };
-          //lights.diffuse = { r: 0.2, g: 0.2, b: 0.2 };
-          //lights.specular = { r: 0.2, g: 0.2, b: 0.2 }; 
           lights.directional = {
             color: {
               r: 0.8,
@@ -144,26 +165,19 @@
             }
           };
 
+        var t0 = PhiloGL.Fx.animationTime();
+
         draw();
 
+        setInterval(function() {
+          var t1 = PhiloGL.Fx.animationTime();
+          var fps = (1000/(t1 - t0));
+          $id("fps").innerHTML = fps;
+          t0 = t1;
+        }, 1000 / 60);
+
         function draw() {
-          view.id();
-
-          NScamera.step();
-          NScamera.feed(view);
-
-          //camera.view.id();
-          //camera.view.$mulMat4(mvMatrix);
-
-          view.$invert();
-
           NScamera.update();
-
-          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-          program.setUniform('worldMatrix', camera.view);
-          program.setUniform('projectionMatrix', camera.projection);
-          renderizer.render(type);
           PhiloGL.Fx.requestAnimationFrame(draw);
         }
       }

@@ -1,13 +1,15 @@
 var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 ,"lines" : 3 } ;
+var idMatrix = new PhiloGL.Mat4();
+var STICK_RADIUS = 0.2;
 
 function Renderizer(){
   this.showAxis = false;
-  this.quality = 30;
-	this.init();
+  this.quality = 15;
+  this.init();
 }
 
 Renderizer.prototype.init = function(){
-	this.models = [];
+  this.models = [];
   this.maxDistance = 0;
 }
 
@@ -51,7 +53,6 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
   for(i in this.models){
       scene.add(this.models[i]);
     }
-    
 
     if(setDistance || setDistance==undefined){
       NScamera.setTarget(this.protein.barycenter());
@@ -60,18 +61,169 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
       else
         NScamera.setDistance(this.protein.maxDistance()*3);
     }
+
+
+    this.objects = {};
+    var q = [5, 10, 15, 20, 25, 30];
+    for(var i in q){
+      var quality = q[i];
+      var sphere = new PhiloGL.O3D.Sphere({nlat: quality, nlong: quality, radius: 1.0 });
+      scene.defineBuffers(sphere);
+      this.objects['sphere'+quality] = sphere;
+
+      var cylinder = new PhiloGL.O3D.Cylinder({nradial: quality, height: 1.0, topCap: 1, bottomCap: 1, radius: 1.0 });
+      scene.defineBuffers(cylinder);
+      this.objects['cylinder'+quality] = cylinder;
+    }
+
+    if(type==RenderizerType.vanDerWaals)
+      this.distObj = [[5,30],[10,25],[15,20],[30,15],[10]];
+    else
+      this.distObj = [[1,30],[5,25],[10,20],[15,15],[10]];
+
+    this.render(type);
   }
 
+
+
+Renderizer.prototype.renderObject = function(obj, position, color, scale, theta, axis) {
+      var view = camera.view,
+          projection = camera.projection;
+      
+      if(theta!=undefined && axis!=undefined){
+        obj.matrix.id();
+        obj.matrix.$translate(position.x, position.y, position.z);
+        obj.matrix.$rotateAxis(theta, axis);
+        position = new PhiloGL.Vec3(0, 0, 0);
+      }
+
+      var object = obj.matrix,
+          world = view.mulMat4(object),
+          worldInverse = world.invert(),
+          worldInverseTranspose = worldInverse.transpose();
+
+      obj.setState(program);
+
+      program.setUniforms({
+        objectMatrix: object,
+        worldMatrix: world,
+        worldInverseMatrix: worldInverse,
+        worldInverseTransposeMatrix: worldInverseTranspose,
+        translateVertex: position,
+        color: color,
+        scaleVertex: scale,
+        angleRotationVertex: theta,
+        axisRotationVertex: axis
+      });
+
+      gl.drawElements((obj.drawType !== undefined) ? gl.get(obj.drawType) : gl.TRIANGLES, obj.$indicesLength, gl.UNSIGNED_SHORT, 0);
+        
+      obj.unsetState(program);
+
+      this.numobjects++;
+}
+
 Renderizer.prototype.render = function(type){
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  this.numobjects = 0;
+  this.drawAxis();
+
   if(type == RenderizerType.lines){
     for (i in protein.bonds){
         this.lines_drawBond(protein.bonds[i]);
     }
-  }
+  } else {
+    function getAtomRadius(atom){
+      if(type == RenderizerType.ballAndStick)
+        return atom.radius;
+      else if(type == RenderizerType.vanDerWaals)
+        return atom.vanDerWaalsRadius;
+      else if(type == RenderizerType.stick)
+        return STICK_RADIUS;
+    }
 
-  this.drawAxis();
-  scene.render();
+    if(1==0){
+      scene.render();
+    } else{
+      scene.beforeRender(program);
+      
+      for(var i in this.protein.atoms){
+        var atom = this.protein.atoms[i];
+        var position = new PhiloGL.Vec3(atom.x, atom.y, atom.z);
+        var radius = getAtomRadius(atom);
+
+        if(culling.isSphereInFrustum(position, radius)){
+          var scale = [radius, radius, radius];
+          var color = atom.color;
+          var distance = camera.position.distTo(position);
+
+              var obj;
+          for(var i in this.distObj){
+            var arr = this.distObj[i];
+            
+            if(arr.length>1){
+              var dist = arr[0];
+              if(distance<dist){
+                obj = this.objects['sphere'+arr[1]];
+                break;
+              }
+            } else{
+              obj = this.objects['sphere'+arr[0]];
+            }
+          }
+          
+          program.setUniform("enablePicking", atom.selected);
+          this.renderObject(obj, position, color, scale);
+          
+        }
+      }
+
+
+      for(var i in this.protein.bonds) {
+        var bond = this.protein.bonds[i];
+        var atom1 = this.protein.atoms[bond.idSource];
+        var atom2 = this.protein.atoms[bond.idTarget];
+        var legami = bond.bondType;
+
+        var v1 = new PhiloGL.Vec3(atom1.x, atom1.y, atom1.z);
+        var v2 = new PhiloGL.Vec3(atom2.x, atom2.y, atom2.z);
+        var mid = v1.add(v2).scale(0.5);
+        var sub = v1.sub(v2);
+        var hC = Math.pow((Math.pow(sub.x, 2) + Math.pow(sub.y, 2) + Math.pow(sub.z, 2)), 0.5);
+        
+        if(culling.isSphereInFrustum(mid, hC/2)){
+          if(type == RenderizerType.ballAndStick){
+            this.bond(v1, v2, [1,1,1,1]);
+          }
+          else if(type == RenderizerType.stick){
+            this.bond(v1, mid, atom1.color);
+            this.bond(mid, v2, atom2.color);
+          }
+        }
+      }
+    }
+  }
+  $id('objects').innerHTML = this.numobjects;
 }
+Renderizer.prototype.bond = function (v1, v2, color){
+        function getStickRadius(){
+            if(type == RenderizerType.ballAndStick)
+              return this.protein.minRadius()/8;
+            else if(type == RenderizerType.stick)
+              return STICK_RADIUS;
+          }
+
+        var radius = getStickRadius();
+        var midpoint = v1.add(v2).scale(0.5);
+        var sub = v1.sub(v2);
+        var hC = Math.pow((Math.pow(sub.x, 2) + Math.pow(sub.y, 2) + Math.pow(sub.z, 2)), 0.5);
+        
+        var bondDirection = v1.sub(v2).unit();
+        var cylinderDirection = new PhiloGL.Vec3(0, 1, 0);
+        var angle = Math.acos(bondDirection.dot(cylinderDirection));
+        var axis = cylinderDirection.$cross(bondDirection).$unit();
+        this.renderObject(this.objects['cylinder15'], midpoint, color, [radius,hC,radius], angle, axis);
+      }
 
 Renderizer.prototype.drawAtom = function(atom, radius){
     var atomSphere = new PhiloGL.O3D.Sphere({
@@ -81,7 +233,8 @@ Renderizer.prototype.drawAtom = function(atom, radius){
             radius: radius,
             colors: atom.color,
             uniforms: {
-              'color': atom.color
+              'color': atom.color,
+              'scaleVertex': [1, 1, 1]
             }
         });
 
@@ -115,7 +268,8 @@ Renderizer.prototype.drawBond = function(v1, v2, col, numeroLegami, radius){
         bottomCap: 1,
         colors: col,
         uniforms: {
-              'color': col
+              'color': col,
+              'scaleVertex': [1, 1, 1]
             }
       });
     
@@ -126,7 +280,7 @@ Renderizer.prototype.drawBond = function(v1, v2, col, numeroLegami, radius){
       var axis = cylinderDirection.$cross(bondDirection).$unit();
       bond.matrix.$rotateAxis(angle, axis);
       if(numeroLegami>=2){
-      	var bondDistance = radius*2;
+        var bondDistance = radius*2;
         if(l==1){
           bond.matrix.$translate(bondDistance, 0, 0);
         }
@@ -151,9 +305,14 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
 
     gl.lineWidth(width);
     program.setUniform('color', color);
-    program.setUniform('nolights', true);
+    program.setUniform('scaleVertex', [1,1,1]);
+    program.setUniform('matrixRotation', idMatrix);
+    program.setUniform('scaleVertex', [1,1,1]);
+    program.setUniform('worldMatrix', camera.view);
+    program.setUniform('projectionMatrix', camera.projection);
+    program.setUniform('enableLights', false);
     gl.drawArrays(gl.LINES, 0, 2);
-    program.setUniform('nolights', false);
+    program.setUniform('enableLights', true);
 }
 
 Renderizer.prototype.drawAxis = function(){
@@ -239,4 +398,3 @@ Renderizer.prototype.lines_drawBond = function(bond) {
 
 // LINES VISUALIZATION END
 
-  

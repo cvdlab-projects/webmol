@@ -190,8 +190,8 @@ vanDerWaalsRadius["ZN"] = 1.39;
 
   function Bond(idS, idT, bondT){
     this.idSource = idS; 
-	this.idTarget = idT;
-	this.bondType = bondT;
+	  this.idTarget = idT;
+	  this.bondType = bondT;
   }
 
   // Funzione per la creazione di legami nel formato indexAtom=1 si lega con gli atomi in arrayIndexAtom ([2,3,4])
