@@ -6,60 +6,58 @@
 
   Protein.prototype.init = function(){
     this.atoms = {};
-    this.arratoms = [];
     this.bonds = [];
   }
  
   Protein.prototype.addAtom = function(id, atom){
     this.atoms[id] = atom;
-    this.arratoms.push(atom);
   }
 
   Protein.prototype.addBond = function(bond){
     this.bonds.push(bond);
   }
 
-  Protein.prototype.minRadius = function(){
-      var minAtomRadius = 9999;
-      for(var i in this.atoms){
-        if(this.atoms[i].radius < minAtomRadius){
-          minAtomRadius = this.atoms[i].radius;
-        }
+  Protein.prototype.getAtomsArray = function(){
+    var atomsarray = [];
+    for(var key in this.atoms){
+      atomsarray.push(this.atoms[key]);
+    }
+    return atomsarray;
+  }
+
+  Protein.prototype.getAtomsWithKeyChain = function(){
+    var atomsChain = {};
+    for(var key in this.atoms){
+      var atom = this.atoms[key];
+      if(atom.chainID!=undefined){
+        if(atomsChain[atom.chainID]==undefined)
+          atomsChain[atom.chainID] = [];
+
+        atomsChain[atom.chainID].push(atom);
       }
-      return minAtomRadius;
     }
-    
-function max(array,prop){
-      var values = array.map(function (el){
-        return el[prop];
-      });
-      return Math.max.apply(Math,values);
-    }
-function min(array,prop){
-      var values = array.map(function (el){
-        return el[prop];
-      });
-      return Math.min.apply(Math,values);
-    }
+    return atomsChain;
+  }
 
   Protein.prototype.barycenter = function(){
+        var atomsarray = this.getAtomsArray();
+        var maxx=max(atomsarray,'x');
+        var minx=min(atomsarray,'x');
 
-        var maxx=max(this.arratoms,'x');
-        var minx=min(this.arratoms,'x');
+        var maxy=max(atomsarray,'y');
+        var miny=min(atomsarray,'y');
 
-        var maxy=max(this.arratoms,'y');
-        var miny=min(this.arratoms,'y');
-
-        var maxz=max(this.arratoms,'z');
-        var minz=min(this.arratoms,'z');
+        var maxz=max(atomsarray,'z');
+        var minz=min(atomsarray,'z');
 
       return new PhiloGL.Vec3((maxx+minx)/2,(maxy+miny)/2,(maxz+minz)/2);
     }
 
     Protein.prototype.maxDistance = function(){
-      var maxx=max(this.arratoms,'x');
-        var maxy=max(this.arratoms,'y');
-        var maxz=max(this.arratoms,'z');
+        var atomsarray = this.getAtomsArray();
+        var maxx=max(atomsarray,'x');
+        var maxy=max(atomsarray,'y');
+        var maxz=max(atomsarray,'z');
         return Math.max.apply(Math,[maxx,maxy,maxz]);
     }
  

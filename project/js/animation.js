@@ -1,10 +1,12 @@
-	function Animation(){
-		
-	}
+	var GOTODISTANCE_DURATION = 1000;
+	var GOTOROTATION_DURATION = 500;
+	var GOTOCENTER_DURATION = 1000;
+
+	function Animation(){}
 
 	Animation.prototype.goToDistance = function(_to, _from){
 		  var fx = new PhiloGL.Fx({
-		    duration: 1000,
+		    duration: GOTODISTANCE_DURATION,
 		    transition: PhiloGL.Fx.Transition.Quad.easeOut,
 		    onCompute: function(delta) {
 		      var from = this.opt.from, to = this.opt.to;
@@ -14,13 +16,12 @@
 
 		  fx.start({
               from: _to,
-              to: _from
-            });
+              to: _from });
 		}
 
 	  Animation.prototype.goToRotationQuatCoord = function(_to, _coord){
 	    var fx = new PhiloGL.Fx({
-	        duration: 500,
+	        duration: GOTOROTATION_DURATION,
 	        transition: PhiloGL.Fx.Transition.Quad.easeOut,
 	        onCompute: function(delta) {
 	          var from = this.opt.from, to = this.opt.to, coord = this.opt.coord;
@@ -31,13 +32,12 @@
 	      fx.start({
 	        from: NScamera.rot[_coord],
 	        to: _to,
-	        coord: _coord
-	      });
+	        coord: _coord });
 	   }
 
 	  Animation.prototype.goToCenterCoord = function(_to, _coord){
 	    var fx = new PhiloGL.Fx({
-	        duration: 1000,
+	        duration: GOTOCENTER_DURATION,
 	        transition: PhiloGL.Fx.Transition.Quad.easeOut,
 	        onCompute: function(delta) {
 	          var from = this.opt.from, to = this.opt.to, coord = this.opt.coord;
@@ -48,8 +48,7 @@
 	      fx.start({
 	        from: NScamera.center[_coord],
 	        to: _to,
-	        coord: _coord
-	      });
+	        coord: _coord });
 	   }
 
 	  Animation.prototype.resetRotation = function(){

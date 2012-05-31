@@ -6,7 +6,6 @@ function FrustumCulling(camera){
 	this.nearD = camera.near;
 	this.farD = camera.far;
 
-	// compute width and height of the near and far plane sections
 	var tang = Math.tan(ANG2RAD * this.angle * 0.5) ;
 
 	this.nh = this.nearD * tang;
@@ -34,8 +33,8 @@ FrustumCulling.prototype.isPointInFrustum = function(point){
 }
 
 FrustumCulling.prototype.isSphereInFrustum = function(point, radius){
-	for(var key in this.pl){
-		var plane = this.pl[key];
+	for(var key in this.planes){
+		var plane = this.planes[key];
 		var dist = this.distToPlane(plane, point);
 		if(dist < -radius){
 			return false;
@@ -68,11 +67,10 @@ FrustumCulling.prototype.updatePlanes = function(p, l, u){
 		nc = p.sub(Z.scale(this.nearD));
 		fc = p.sub(Z.scale(this.farD));
 
-
 		function computeCorners(c, h, w){
-			tl = c.add(Y.scale(h)).sub(X.scale(w));
-			tr = c.add(Y.scale(h)).add(X.scale(w));
-			bl = c.sub(Y.scale(h)).sub(X.scale(w));
+			var tl = c.add(Y.scale(h)).sub(X.scale(w)),
+			tr = c.add(Y.scale(h)).add(X.scale(w)),
+			bl = c.sub(Y.scale(h)).sub(X.scale(w)),
 			br = c.sub(Y.scale(h)).add(X.scale(w));
 			return [tl,tr,bl,br];
 		}
@@ -82,15 +80,15 @@ FrustumCulling.prototype.updatePlanes = function(p, l, u){
 		var ntl = n[0], ntr = n[1], nbl = n[2], nbr = n[3];
 		var ftl = f[0], ftr = f[1], fbl = f[2], fbr = f[3];
 
-		var pl = {};
+		var planes = {};
 
-		pl['TOP'] = this.createPlane(ntr,ntl,ftl);
-		pl['BOTTOM'] = this.createPlane(nbl,nbr,fbr);
-		pl['LEFT'] = this.createPlane(ntl,nbl,fbl);
-		pl['RIGHT'] = this.createPlane(nbr,ntr,fbr);
-		pl['NEAR'] = this.createPlane(ntl,ntr,nbr);
-		pl['FAR'] = this.createPlane(ftr,ftl,fbl);
+		planes['TOP'] = this.createPlane(ntr,ntl,ftl);
+		planes['BOTTOM'] = this.createPlane(nbl,nbr,fbr);
+		planes['LEFT'] = this.createPlane(ntl,nbl,fbl);
+		planes['RIGHT'] = this.createPlane(nbr,ntr,fbr);
+		planes['NEAR'] = this.createPlane(ntl,ntr,nbr);
+		planes['FAR'] = this.createPlane(ftr,ftl,fbl);
 
-		this.pl = pl;
+		this.planes = planes;
 	}
 }

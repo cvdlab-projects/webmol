@@ -166,62 +166,23 @@ vanDerWaalsRadius["ZN"] = 1.39;
 
   // Atom Class
 
-  function Atom(id, name, x, y, z, color, rad, vanDerWaalsRad){
+  function Atom(id, element, x, y, z, chainID){
     this.id = id;
-	this.name = name;
-	this.x = x;
-	this.y = y;
-	this.z = z;
-	this.color = colorMap[name.toUpperCase()];
-	if(this.color==undefined){
-		this.color = color;
-	}
-
-	this.radius = rad;
-
-	this.vanDerWaalsRadius = vanDerWaalsRadius[name.toUpperCase()];
-
-	if(this.vanDerWaalsRadius==undefined){
-		this.vanDerWaalsRadius = vanDerWaalsRad;
-	}
+    this.element = element;
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.chainID = chainID;
+    this.color = colorMap[element.toUpperCase()];
+    this.vanDerWaalsRadius = vanDerWaalsRadius[element.toUpperCase()];
   }
 
   // Bond Class
 
-  function Bond(idS, idT, bondT){
-    this.idSource = idS; 
-	  this.idTarget = idT;
-	  this.bondType = bondT;
-  }
-
-  // Funzione per la creazione di legami nel formato indexAtom=1 si lega con gli atomi in arrayIndexAtom ([2,3,4])
-  // se i < j si skippa poichè nel connect sono esplicitati i legami sia da i a j che da j a i.
-  // se c'è un doppio legame è referenziato con doppia occorrenza nell'arrayIndexAtom.
-
-  Bond.prototype.createBond = function(protein, indexAtom, arrayIndexAtom, offset){
-  	for(var i in arrayIndexAtom){
-  		var index = arrayIndexAtom[i];
-  		var numeroLegami = 1;
-  		if(i+1<arrayIndexAtom.length){
-	  			//doppio legame
-	  			if(arrayIndexAtom[i+1]==index){
-	  				numeroLegami++;
-	  			}
-	  			//triplo legame
-	  			if(i+2<arrayIndexAtom.length){
-	  			if(arrayIndexAtom[i+2]==index){
-	  				numeroLegami++;
-	  			}
-  			}
-  		}
-
-      if(indexAtom>index){
-    		if(offset==undefined){
-    			var bond = new Bond(indexAtom - 1, index - 1, numeroLegami);
-    		} else {
-    			var bond = new Bond(indexAtom - 1 + offset, index - 1 + offset, numeroLegami);
-    		}
-    		protein.addBond(bond);
-      }
-  	}
+  function Bond(idS, idT, nameS, nameT, bondT){
+    this.idSource = idS;
+    this.idTarget = idT;
+    this.nameSource = nameS;
+    this.nameTarget = nameT;
+    this.bondType = bondT;
   }
