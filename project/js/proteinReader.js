@@ -135,7 +135,7 @@
                 indexResSeq.push(relativeId);
                 admitted.push([relativeId,name]);
                 
-                var atom = new Atom(id, element, x, y, z, chainID);
+                var atom = new Atom(id, element, x, y, z, chainID, resSeq);
                 protein.addAtom(id, atom);
             }
 

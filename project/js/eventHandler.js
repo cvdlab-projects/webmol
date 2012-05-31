@@ -9,7 +9,7 @@
 		
 		EventHandler.prototype.clearSelectionModel = function(){
 			if(selectedModel){
-				selectedModel.atom.selected = false;
+				renderizer.protein.selectedAtom = undefined;
 				selectedModel = undefined;
 				$id('debug').innerHTML = "";
 			}
@@ -20,7 +20,7 @@
 				this.clearSelectionModel();
 			}
 			if(model && model!=selectedModel){
-	            model.atom.selected = true;
+	            renderizer.protein.selectedAtom = model.atom;
 	            animation.goToDistance(NScamera.distance, model.radius*10);
 	            animation.goToCenter(model.position);
 	            selectedModel = model;

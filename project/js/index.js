@@ -56,6 +56,7 @@
           var cX = e.x + canvas.width/2;
           var cY = canvas.height/2 - e.y;
           var model = scene.pick(cX, cY);
+          //var model = renderizer.pick(cX, cY);
           eventHandler.onClick(e, model);
         },
         onDragStart: function(e) {
