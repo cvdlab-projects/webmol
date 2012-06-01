@@ -75,7 +75,7 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
     if(setDistance || setDistance==undefined){
       var barycenter = this.protein.barycenter();
       NScamera.setTarget(barycenter);
-      NScamera.setDistance((this.protein.maxDistance()) * 3);
+      NScamera.setDistance((this.protein.maxDistance())*1.5);
     }
 
     this.objects = {};
