@@ -4,6 +4,11 @@ border-width:2px;
 border-style:solid;
 border-color:white;
 }
+
+#info{
+margin-top:15px;
+margin-bottom:5px;
+}
 .centeredImage{
 	text-align:center;
     margin-top:0px;

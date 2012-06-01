@@ -196,15 +196,16 @@ function ProcessRequest()
 <p class="centeredImage">
   <img src="resources/logoscritta.png" alt="WebMol logo" height="20%"/>
 </p>
-<h3>Visualization:
+<div id="selectOption">
+Visualization:
 <select id="renderizerType" onChange="renderizerTypeChanged()">
   <option value="ballandstick">Ball and Stick</option>
   <option value="vanderwaals">Van der Waals</option>
   <option value="stick">Stick</option>
   <option value="lines">Lines</option>
 </select>
-</h3>
-<h3>Amino Acids:
+
+Amino Acids:
 <select id="proteinSelected" onChange="proteinChanged()">
   <option value="Alanine">Alanine</option>
   <option value="Arginine">Arginine</option>
@@ -212,7 +213,10 @@ function ProcessRequest()
   <option value="Tryptophan">Tryptophan</option>
   <option value="Insuline">Insuline</option>
 </select>
-</h3>
+
+<input type="checkbox" id="viewBackBone"name="backbone" value="BackBone" onChange="renderizer.render(type)"/> View backbone<br />
+
+</div>
 <div id="info">
       FPS: <span id="fps"></span><br>
       Debug Info: <span id="debug"></span> | Objects: <span id="objects"></span><br>
@@ -229,5 +233,9 @@ function ProcessRequest()
 </td></tr>
 </table>
 </div>
+
 </body>
+<footer>
+
+</footer>
 </html>
