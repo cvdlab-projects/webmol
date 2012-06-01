@@ -12,7 +12,7 @@
       var atom = model[strAtom+i];
       while(atom !== undefined){
         if(atom["type"]=="ATOM"){
-              protein.addAtom(atom["serial"], new Atom(atom["serial"], atom["element"], atom["x"]/1, atom["y"]/1, atom["z"]/1));
+              protein.addAtom(atom["serial"], new Atom(atom["serial"], atom["element"], atom["name"], atom["x"]/1, atom["y"]/1, atom["z"]/1), atom["resSeq"], atom["resName"]);
         }
         i++;
         atom = model[strAtom+i];
@@ -31,11 +31,15 @@
       return protein;
     }
 
-     ProteinReader.prototype.loadProtein = function(jsonstr){
+    
+
+     ProteinReader.prototype.loadProtein = function(jsonstr, visual){
         var protein = new Protein();
-        var jsonParse = eval('('+jsonstr+')');
-        var model = jsonParse["MODEL_1"];
-        var strAtom = "r_";
+        
+        var models = jsonstr['MODEL'];
+        var model = models[visual];
+        var atoms = model['ATOM'];
+        
         var i = 1;
 
         var offset = 0;
@@ -90,20 +94,58 @@
             }
           }
         }
+
+        function drawHetatm() {
+            var hetatm = model['HETATM'];
+            for(key in hetatm){
+                var heta = hetatm[key];
+                
+                if (heta['type'] === "HETATM"){
+                    
+                    var id = heta['serial'];
+                    var resSeq = heta['resSeq'];
+                    var resName = heta['resName'];
+                    var element = heta['element'];
+                    var name = heta['name'];
+                    var chainID = heta['chainID'];
+                    var x = heta['x']/1, y = heta['y']/1, z = heta['z']/1;
+
+                    var atom = new Atom(id, element, name, x, y, z, chainID, resSeq, resName);
+                    protein.addAtom(id, atom);
+                }
+                
+            }
+        }
+
+        function drawConect(conectList){
+            for(source in conectList){
+                var targetList = conectList[source];
+                for(i in targetList){
+                    var target = targetList[i];
+                    if(Bond( source, target , 1 ) !== undefined)
+                        protein.addBond( new Bond( source, target , 1 ) );
+                }
+            }
+        }
+
+        function countModels(mapModels){
+            var count = 0;
+            for(key in mapModels)
+                count++;
+            return count-1;
+        }
         
-        while(model[strAtom+i] !== undefined //&& i<60
-            ){
+        for (key in atoms) {
+            var record = atoms[key];
 
-            var record = model[strAtom+i];
-
-            if(record["type"] == "ATOM"){
-                var id = record["serial"];
-                var resSeq = record["resSeq"];
-                var resName = record["resName"];
-                var element = record["element"];
-                var name = record["name"];
-                var chainID = record["chainID"];
-                var x = record["x"]/1, y = record["y"]/1, z = record["z"]/1;
+            if(record['type'] == "ATOM"){
+                var id = record['serial'];
+                var resSeq = record['resSeq'];
+                var resName = record['resName'];
+                var element = record['element'];
+                var name = record['name'];
+                var chainID = record['chainID'];
+                var x = record['x']/1, y = record['y']/1, z = record['z']/1;
 
                 if(peptideListN[chainID] == undefined){
                   peptideListN[chainID] = [];
@@ -135,15 +177,19 @@
                 indexResSeq.push(relativeId);
                 admitted.push([relativeId,name]);
                 
-                var atom = new Atom(id, element, x, y, z, chainID, resSeq);
+                var atom = new Atom(id, element, name, x, y, z, chainID, resSeq, resName);
+                // alert(id+" "+atom.aminoacid);
                 protein.addAtom(id, atom);
             }
-
-            i++;
-          }
-
+      }
           // CREA I BOND PER L'ULTIMA CATENA
           createBonds(lastResName, indexResSeq, admitted, offset);
+
+        // drawHetatm();
+
+          if (jsonstr['CONECT'] !== undefined)
+            drawConect(jsonstr['CONECT']);
+          
           createPeptides(peptideListN, peptideListC);
           return protein;
     }

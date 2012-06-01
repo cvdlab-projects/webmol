@@ -3,7 +3,7 @@
 <head>
 <title>WEB Mol</title>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-
+<link rel="stylesheet" type="text/css" href="resources/style.css"/>
 <script id="shader-fs" type="x-shader/x-fragment">
 #define LIGHT_MAX 50
 
@@ -145,7 +145,38 @@ void main(void) {
   gl_Position = projectionMatrix * worldMatrix * transformedPosition;
 }
 </script>
+<script id="httpRequest">
+    function httpGet(theUrl)
+{
+    xmlHttp = new XMLHttpRequest(); 
+    
+    xmlHttp.open( "GET", theUrl, true );
 
+    xmlHttp.onreadystatechange = ProcessRequest;
+    xmlHttp.send(null);
+     alert("qui1");
+    //xmlHttp.send( null );
+}
+
+function ProcessRequest() 
+{
+  alert("qui");
+    if ( xmlHttp.readyState == 4 && xmlHttp.status == 200 ) 
+    {
+        if ( xmlHttp.responseText == "Not found" ) 
+        {
+             alert("Not Found");
+        }
+        else
+        {
+            alert("xmlHttp.responseText");
+            $id('debug').innerHTML = xmlHttp.responseText;
+            //var info = eval ( "(" + xmlHttp.responseText + ")" );
+
+        }                    
+    }
+  }
+</script>
 <script type="text/javascript" src="js/PhiloGL.js"></script>
 <script type="text/javascript" src="js/animation.js"></script>
 <script type="text/javascript" src="js/camera.js"></script>
@@ -159,8 +190,12 @@ void main(void) {
 <script type="text/javascript" src="js/utils.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 
-<body onload="webGLStart();">
-<h1>WebMol Project</h1>
+
+
+<body onload="webGLStart();" bgcolor="black">
+<p class="centeredImage">
+  <img src="resources/logoscritta.png" alt="WebMol logo" height="20%"/>
+</p>
 <h3>Visualization:
 <select id="renderizerType" onChange="renderizerTypeChanged()">
   <option value="ballandstick">Ball and Stick</option>
@@ -187,8 +222,10 @@ void main(void) {
 <table>
 <tr><td>
 <canvas id="webMolCanvas" width="640" height="480"></canvas>
+
 </td><td>
-<img src="images/legenda.png" alt="legenda webmol" height="480"/>
+<div id="infoAtom">
+</div>
 </td></tr>
 </table>
 </div>

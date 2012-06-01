@@ -166,14 +166,16 @@ vanDerWaalsRadius["ZN"] = 1.39;
 
   // Atom Class
 
-  function Atom(id, element, x, y, z, chainID, resSeq){
+  function Atom(id, element, name, x, y, z, chainID, resSeq, resName){
     this.id = id;
     this.element = element;
+    this.name = name;
     this.x = x;
     this.y = y;
     this.z = z;
     this.chainID = chainID;
     this.resSeq = resSeq;
+    this.aminoacid = resName;
     this.color = colorMap[element.toUpperCase()];
     this.vanDerWaalsRadius = vanDerWaalsRadius[element.toUpperCase()];
   }

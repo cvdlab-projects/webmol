@@ -25,7 +25,10 @@
 	            animation.goToCenter(model.position);
 	            selectedModel = model;
 
-	            $id('debug').innerHTML = "SELECTED ELEMENT: "+model.atom.element;
+	            //$id('debug').innerHTML = "SELECTED ELEMENT: "+model.atom.element;
+	            $id('infoAtom').innerHTML = "Selected element: "+model.atom.element+
+	            "<br>"+"Selected name: "+model.atom.aminoacid+
+	            "<br>"+"Selected aminoAcid name: "+model.atom.name;
           	}
 		}
 		EventHandler.prototype.onDragStart = function(e){
