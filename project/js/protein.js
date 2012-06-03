@@ -55,6 +55,7 @@
 
     Protein.prototype.maxDistance = function(){
         var atomsarray = this.getAtomsArray();
+
         var maxx=max(atomsarray,'x');
         var minx=min(atomsarray,'x');
 
@@ -65,7 +66,6 @@
         var minz=min(atomsarray,'z');
 
         return Math.max.apply(Math,[maxx-minx,maxy-miny,maxz-minz]);
-        //return Math.max.apply(Math,[maxx,maxy,maxz]);
     }
  
 

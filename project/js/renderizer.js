@@ -91,9 +91,11 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
       this.objects['cylinder'+quality] = cylinder;
     }
 
-    this.distObj = [[5,30],[50,20],[100, 10], [5]];
+    this.distObj = [[5,30],[75,20],[150, 10], [5]];
 
     this.precalculateMatrix();
+
+    this.createScene();
 
     this.render(type);
   }
@@ -129,6 +131,7 @@ Renderizer.prototype.renderObject = function(obj, position, color, scale, matrix
 Renderizer.prototype.render = function(type){
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.numobjects = 0;
+
   this.objmodels = {};
 
   if($id('viewBackBone').checked && type != RenderizerType.vanDerWaals)
@@ -150,6 +153,7 @@ Renderizer.prototype.render = function(type){
 }
 
 Renderizer.prototype.renderScene = function(){
+    scene.beforeRender(program);
     // Method for pseudo-instancing (set buffer once per object to render)
     for(var objname in this.objmodels){
       var obj = this.objects[objname];
@@ -177,8 +181,6 @@ Renderizer.prototype.createScene = function(){
         else if(type == RenderizerType.stick)
           return STICK_RADIUS;
       }
-
-    scene.beforeRender(program);
     
     for(var i in this.protein.atoms){
       var atom = this.protein.atoms[i];
@@ -353,7 +355,7 @@ Renderizer.prototype.drawBackBone = function(){
         return BALLANDSTICK_RADIUS/2;
       else if(type == RenderizerType.stick)
         return STICK_RADIUS + 0.1;
-      else if(type == RenderizerType.line)
+      else if(type == RenderizerType.lines)
         return 0.1;
     }
 
