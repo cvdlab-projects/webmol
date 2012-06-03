@@ -11,20 +11,22 @@
 			if(selectedModel){
 				renderizer.protein.selectedAtom = undefined;
 				selectedModel = undefined;
-				$id('debug').innerHTML = "";
+				$id('infoAtom').style.visibility='hidden';
+				$id('infoAtom').innerHTML = "";
 			}
 		}
 
 		EventHandler.prototype.onClick = function(e, model){
 			if(selectedModel || model==selectedModel){
 				this.clearSelectionModel();
+				
 			}
 			if(model && model!=selectedModel){
 	            renderizer.protein.selectedAtom = model.atom;
 	            animation.goToDistance(NScamera.distance, model.radius*10);
 	            animation.goToCenter(model.position);
 	            selectedModel = model;
-
+	            $id('infoAtom').style.visibility='visible';
 	            //$id('debug').innerHTML = "SELECTED ELEMENT: "+model.atom.element;
 	            $id('infoAtom').innerHTML = "Selected element: "+model.atom.element+
 	            "<br>"+"Selected name: "+model.atom.aminoacid+

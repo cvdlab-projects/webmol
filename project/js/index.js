@@ -4,6 +4,25 @@
   var originRotationOn=true;
   var type = RenderizerType.ballAndStick;
 
+
+  function resizeWindow()
+  {
+  var cont=canvas.parentNode;
+  if ((canvas.width!=cont.clientWidth)||(canvas.height!=cont.clientHeight)) {
+    canvas.width=cont.clientWidth;
+    canvas.height=cont.clientHeight;
+    }
+    camera.aspect=canvas.width/canvas.height;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    camera.update();
+    culling.updatePlanes(camera.position, camera.target, camera.up);
+    renderizer.renderize(protein, type, false);
+  }
+  
+  function backboneChanged(){
+    renderizer.render(type);
+  }
+
   function renderizerTypeChanged(){
     var sel = $id('renderizerType').options;
     for(i=0; i<sel.length; i++){
@@ -87,13 +106,26 @@
             culling = new FrustumCulling(camera);
 
         var element = $id('webMolCanvas')[0];
-        
+
+        var cont=canvas.parentNode;
+        if ((canvas.width!=cont.clientWidth)||(canvas.height!=cont.clientHeight)) {
+            canvas.width=cont.clientWidth;
+            canvas.height=cont.clientHeight;
+        }
+        camera.aspect=canvas.width/canvas.height;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        camera.update();
+ 
+
+
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
         gl.viewport(0, 0, canvas.width, canvas.height);
         
+
+
         proteinChanged();
         renderizer.setupLight();
 

@@ -1,17 +1,6 @@
 var ANG2RAD = 3.14159265358979323846/180.0;
 
-function FrustumCulling(camera){
-	this.ratio = camera.aspect;
-	this.angle = camera.fov;
-	this.nearD = camera.near;
-	this.farD = camera.far;
-
-	var tang = Math.tan(ANG2RAD * this.angle * 0.5) ;
-
-	this.nh = this.nearD * tang;
-	this.nw = this.nh * this.ratio;
-	this.fh = this.farD * tang;
-	this.fw = this.fh * this.ratio;
+function FrustumCulling(){
 	this.updatePlanes();
 }
 
@@ -36,7 +25,7 @@ FrustumCulling.prototype.isSphereInFrustum = function(point, radius){
 	for(var key in this.planes){
 		var plane = this.planes[key];
 		var dist = this.distToPlane(plane, point);
-		if(dist < -radius){
+		if(dist < -radius*2){
 			return false;
 		}
 	}
@@ -54,6 +43,18 @@ FrustumCulling.prototype.distToPlane = function(plane, point) {
 
 FrustumCulling.prototype.updatePlanes = function(p, l, u){
 	var dir,nc,fc,X,Y,Z;
+
+	this.ratio = camera.aspect;
+	this.angle = camera.fov;
+	this.nearD = camera.near;
+	this.farD = camera.far;
+
+	var tang = Math.tan(ANG2RAD * this.angle * 0.5) ;
+
+	this.nh = this.nearD * tang;
+	this.nw = this.nh * this.ratio;
+	this.fh = this.farD * tang;
+	this.fw = this.fh * this.ratio;
 
 	if(p!=undefined && l!=undefined && u!=undefined){
 		Z = p.sub(l);

@@ -4,9 +4,16 @@ var STICK_RADIUS = 0.2;
 var BALLANDSTICK_RADIUS = 0.4;
 var LIGHT_AMBIENT = {r: 0.2, g: 0.2, b: 0.2};
 var LIGHT_DIRECTIONAL = {
-    color: {r: 1,g: 1,b: 1},
-    direction: {x: -0.2,y: -0.2,z: -1.0}
+    color: {r: 0.8,g: 0.8,b: 0.8},
+    direction: {x: 0,y: 0,z: -1.0}
   };
+var colorsChain = {};
+colorsChain['A'] = [0,0,1,1];
+colorsChain['B'] = [0,1,0,1];
+colorsChain['C'] = [1,0,0,1];
+colorsChain['D'] = [1,1,0,1];
+
+
 
 function Renderizer(){
   this.showAxis = false;
@@ -86,7 +93,7 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
       scene.defineBuffers(sphere);
       this.objects['sphere'+quality] = sphere;
 
-      var cylinder = new PhiloGL.O3D.Cylinder({nradial: quality, height: 1.0, topCap: 1, bottomCap: 1, radius: 1.0 });
+      var cylinder = new PhiloGL.O3D.Cylinder({nradial: quality, height: 1.0, radius: 1.0 });
       scene.defineBuffers(cylinder);
       this.objects['cylinder'+quality] = cylinder;
     }
@@ -331,12 +338,6 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
 }
 
 Renderizer.prototype.drawBackBone = function(){
-  var colorsChain = {};
-  colorsChain['A'] = [0,0,1,1];
-  colorsChain['B'] = [0,1,0,1];
-  colorsChain['C'] = [1,0,0,1];
-  colorsChain['D'] = [1,1,0,1];
-
   var atomsChain = this.protein.getAtomsWithKeyChain();
   for(var key in atomsChain){
     var atoms = atomsChain[key];
