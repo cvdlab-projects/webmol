@@ -122,7 +122,7 @@
                 var targetList = conectList[source];
                 for(i in targetList){
                     var target = targetList[i];
-                    if(Bond( source, target , 1 ) !== undefined)
+                    if(protein.atoms[source] !== undefined || protein.atoms[target] !== undefined)
                         protein.addBond( new Bond( source, target , 1 ) );
                 }
             }
