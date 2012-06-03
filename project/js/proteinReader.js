@@ -31,7 +31,13 @@
       return protein;
     }
 
-    
+    ProteinReader.prototype.countModels = function(jsonstr){
+        var mapModels = jsonstr['MODEL'];
+        var count = 0;
+        for(key in mapModels)
+            count++;
+        return count-1;
+    }
 
      ProteinReader.prototype.loadProtein = function(jsonstr, visual){
         var protein = new Protein();
@@ -128,13 +134,6 @@
             }
         }
 
-        function countModels(mapModels){
-            var count = 0;
-            for(key in mapModels)
-                count++;
-            return count-1;
-        }
-        
         for (key in atoms) {
             var record = atoms[key];
 
