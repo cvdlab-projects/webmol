@@ -1,19 +1,9 @@
+body{
+   min-width:500px; 
+   _width: expression( document.body.clientWidth > 640 ? "640px" : "auto" ); /* IE */
 
-#webMolCanvas{
-border-width:2px;
-border-style:solid;
-border-color:white;
-}
-
-#info{
-margin-top:15px;
-margin-bottom:5px;
-}
-.centeredImage{
-	text-align:center;
-    margin-top:0px;
-    margin-bottom:0px;
-    padding:0px;
+      min-height:450px;
+   _height: expression( document.body.clientWidth > 480 ? "480px" : "auto" ); /* IE */
 }
 h3{
 	color:white;
@@ -21,7 +11,36 @@ h3{
 div{
 	color:white;
 }
+#divCanvas{
+	width:100%;
+	height:70%;
+
+}
+#webMolCanvas{
+/*se vuoi metti 1 o 2 pixel*/
+	border-width:0px;
+	border-style:solid;
+	border-color:white;
+}
+#selectOption{
+	height:26%;
+	width:100%;
+}
+
+.centeredImage{
+	text-align:center;
+    margin-top:0px;
+    margin-bottom:0px;
+    padding:0px;
+}
+
 #infoAtom{
-	padding-left:20px;
-	font-size:200%;
+ position:  absolute;
+    right: 10px;
+    top: 10px;
+    width: 200px; 
+    background: rgba(255,255,255,0.66); 
+    border: 2px  solid rgba(0,0,0,0.5); 
+    border-radius: 4px; padding: 8px;
+    color:black;
 }

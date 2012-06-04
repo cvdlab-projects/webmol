@@ -23,3 +23,26 @@ function min(array,prop){
   var values = array.map(function (el){return el[prop];});
   return Math.min.apply(Math,values);
 }
+
+
+function drag_start(event) {
+    var style = window.getComputedStyle(event.target, null);
+    event.dataTransfer.setData("text/plain",
+    (-parseInt(style.getPropertyValue("right"),10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - event.clientY));
+} 
+function drag_over(event) { 
+    event.preventDefault(); 
+    return false; 
+} 
+function drop(event) { 
+    var offset = event.dataTransfer.getData("text/plain").split(',');
+    var dm = document.getElementById('infoAtom');
+    dm.style.right = -(event.clientX + parseInt(offset[0],10)) + 'px';
+    dm.style.top = (event.clientY + parseInt(offset[1],10)) + 'px';
+    event.preventDefault();
+    return false;
+} 
+function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}

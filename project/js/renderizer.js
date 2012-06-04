@@ -1,12 +1,20 @@
-var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 , "lines" : 3 } ;
+var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 , "lines" : 3, "backBone": 4 } ;
 var idMatrix = new PhiloGL.Mat4();
 var STICK_RADIUS = 0.2;
 var BALLANDSTICK_RADIUS = 0.4;
+var BACKBONE_RADIUS = 0.6;
 var LIGHT_AMBIENT = {r: 0.2, g: 0.2, b: 0.2};
 var LIGHT_DIRECTIONAL = {
-    color: {r: 1,g: 1,b: 1},
-    direction: {x: -0.2,y: -0.2,z: -1.0}
+    color: {r: 0.8,g: 0.8,b: 0.8},
+    direction: {x: 0,y: 0,z: -1.0}
   };
+var colorsChain = {};
+colorsChain['A'] = [0,0,1,1];
+colorsChain['B'] = [0,1,0,1];
+colorsChain['C'] = [1,0,0,1];
+colorsChain['D'] = [1,1,0,1];
+
+
 
 function Renderizer(){
   this.showAxis = false;
@@ -86,14 +94,16 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
       scene.defineBuffers(sphere);
       this.objects['sphere'+quality] = sphere;
 
-      var cylinder = new PhiloGL.O3D.Cylinder({nradial: quality, height: 1.0, topCap: 1, bottomCap: 1, radius: 1.0 });
+      var cylinder = new PhiloGL.O3D.Cylinder({nradial: quality, height: 1.0, radius: 1.0 });
       scene.defineBuffers(cylinder);
       this.objects['cylinder'+quality] = cylinder;
     }
 
-    this.distObj = [[5,30],[50,20],[100, 10], [5]];
+    this.distObj = [[5,30],[75,20],[150, 10], [5]];
 
     this.precalculateMatrix();
+
+    this.createScene();
 
     this.render(type);
   }
@@ -126,19 +136,24 @@ Renderizer.prototype.renderObject = function(obj, position, color, scale, matrix
       this.numobjects++;
 }
 
-Renderizer.prototype.render = function(type){
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+Renderizer.prototype.render = function(type,color){
+  
+
+  if(color)
+    gl.clearColor(hexToR(color)/255.0,hexToG(color)/255.0,hexToB(color)/255.0,1.0);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.numobjects = 0;
+
   this.objmodels = {};
 
-  if($id('viewBackBone').checked && type != RenderizerType.vanDerWaals)
+  if(type == RenderizerType.backBone || ($id('viewBackBone').checked && type != RenderizerType.vanDerWaals))
     this.drawBackBone();
 
   if(type == RenderizerType.lines){
     for (var i in protein.bonds){
         this.lines_drawBond(protein.bonds[i]);
     }
-  } else {
+  } else if(type != RenderizerType.backBone){
     this.createScene();
   }
 
@@ -146,10 +161,11 @@ Renderizer.prototype.render = function(type){
 
   this.drawAxis();
 
-  $id('objects').innerHTML = this.numobjects;
+  //$id('objects').innerHTML = this.numobjects;
 }
 
 Renderizer.prototype.renderScene = function(){
+    scene.beforeRender(program);
     // Method for pseudo-instancing (set buffer once per object to render)
     for(var objname in this.objmodels){
       var obj = this.objects[objname];
@@ -176,9 +192,8 @@ Renderizer.prototype.createScene = function(){
           return atom.vanDerWaalsRadius;
         else if(type == RenderizerType.stick)
           return STICK_RADIUS;
-      }
 
-    scene.beforeRender(program);
+      }
     
     for(var i in this.protein.atoms){
       var atom = this.protein.atoms[i];
@@ -207,6 +222,7 @@ Renderizer.prototype.createScene = function(){
             return BALLANDSTICK_RADIUS/8;
           else if(type == RenderizerType.stick)
             return STICK_RADIUS;
+
         }
 
       if(type == RenderizerType.ballAndStick){
@@ -329,12 +345,6 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
 }
 
 Renderizer.prototype.drawBackBone = function(){
-  var colorsChain = {};
-  colorsChain['A'] = [0,0,1,1];
-  colorsChain['B'] = [0,1,0,1];
-  colorsChain['C'] = [1,0,0,1];
-  colorsChain['D'] = [1,1,0,1];
-
   var atomsChain = this.protein.getAtomsWithKeyChain();
   for(var key in atomsChain){
     var atoms = atomsChain[key];
@@ -353,8 +363,10 @@ Renderizer.prototype.drawBackBone = function(){
         return BALLANDSTICK_RADIUS/2;
       else if(type == RenderizerType.stick)
         return STICK_RADIUS + 0.1;
-      else if(type == RenderizerType.line)
+      else if(type == RenderizerType.lines)
         return 0.1;
+      else if(type == RenderizerType.backBone)
+        return BACKBONE_RADIUS;
     }
 
     for(var x = 0; x < backbonePoints.length ; x++){
