@@ -5,45 +5,19 @@
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 <link rel="stylesheet" type="text/css" href="resources/style.css"/>
 <script id="shader-fs" type="x-shader/x-fragment">
-#define LIGHT_MAX 50
 
 #ifdef GL_ES
 precision highp float;
 #endif
 
-varying vec4 vColor;
-varying vec2 vTexCoord;
-varying vec3 lightWeighting;
-
 uniform vec4 color;
-uniform bool hasTexture1;
-uniform sampler2D sampler1;
-
 uniform bool enableLights;
-
 uniform vec3 ambientColor;
-
-uniform float shininess;
 uniform bool enablePicking;
-uniform vec3 pickColor;
-
-uniform bool hasFog;
-uniform vec3 fogColor;
-
-uniform float fogNear;
-uniform float fogFar;
-
 uniform vec3 directionalColor;
 uniform vec3 lightingDirection;
-uniform vec3 pointLocation[LIGHT_MAX];
-uniform vec3 pointColor[LIGHT_MAX];
-uniform vec3 pointSpecularColor[LIGHT_MAX];
-uniform float enableSpecular[LIGHT_MAX];
-uniform int numberPoints;
-uniform mat4 viewMatrix;
 
 varying vec4 transformedNormal;
-varying vec4 mvPosition;
 
 void main(){
      if(!enableLights){
@@ -56,7 +30,7 @@ void main(){
     }
 
 	  if(enablePicking) {
-	    gl_FragColor = vec4(gl_FragColor.x+0.2, gl_FragColor.y+0.2, gl_FragColor.z+0.2, 0.8);
+	    gl_FragColor = vec4(gl_FragColor.x+0.2, gl_FragColor.y+0.2, gl_FragColor.z+0.3, 0.8);
 	  }
 }
 </script>
@@ -65,31 +39,18 @@ void main(){
 
 attribute vec3 position;
 attribute vec3 normal;
-attribute vec4 color;
-attribute vec2 texCoord1;
 
 uniform mat4 worldMatrix;
-uniform mat4 matrixRotation;
-uniform mat4 viewMatrix;
+//uniform mat4 matrixRotation;
 uniform mat4 projectionMatrix;
 uniform mat4 worldInverseTransposeMatrix;
-
-uniform bool enableLights;
-uniform vec3 ambientColor;
-uniform vec3 directionalColor;
-uniform vec3 lightingDirection;
 
 uniform vec3 translateVertex;
 uniform vec3 scaleVertex;
 
-varying vec4 vColor;
-varying vec2 vTexCoord;
-varying vec3 lightWeighting;
 varying vec4 transformedNormal;
-varying vec4 mvPosition;
 
 void main(void) {
-  mvPosition = worldMatrix * vec4(position, 1.0);
   transformedNormal = worldInverseTransposeMatrix * vec4(normal, 1.0);
 
   vec4 transformedPosition = vec4(position * scaleVertex + translateVertex, 1.0);
@@ -172,15 +133,18 @@ Amino Acids:
   <option value="Insuline">Insuline</option>
 </select>
 
+Models:
+<select id="modelSelected" onChange="modelChanged()">
+
+</select>
+
 <input type="checkbox" id="viewBackBone"name="backbone" value="BackBone" onChange="backboneChanged()"/> View backbone<br />
 
 <div id="info">
-      FPS: <span id="fps"></span><br>
-      Debug Info: <span id="debug"></span> | Objects: <span id="objects"></span><br>
+      Objects: <span id="objects"></span> | FPS: <span id="fps"></span>
 </div>
 </div>
 
-<br/>
 <div id="divCanvas" style="float:left;">
 
 <canvas id="webMolCanvas"></canvas>

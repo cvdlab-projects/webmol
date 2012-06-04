@@ -32,7 +32,23 @@
       }
     }
   }
-
+  function removeSelectModel(){
+    elSel = document.getElementById('modelSelected');
+      var y;
+      for (y = elSel.length - 1; y>=0; y--) {
+          elSel.remove(y);
+      }
+  }
+  function addSelectModel(){
+    removeSelectModel();
+    for (i=1; i<=proteinReader.countModels(json);i++){
+      var elOptNew = document.createElement('option');
+      elOptNew.text = 'Model_' + i;
+      elOptNew.value = 'model_' + i;
+      elSel.add(elOptNew, null);
+    }
+    
+  }
   function proteinChanged(){
      NScamera.reset();
      var sel = $id('proteinSelected').options;
@@ -41,28 +57,41 @@
         if(i==0){
           protein = aminoAcids['ALA'];
           renderizer.renderize(protein, type);
+          removeSelectModel();
         }
         else if(i==1){
           protein = aminoAcids['ARG'];
           renderizer.renderize(protein, type);
+          removeSelectModel();
         }
         else if(i==2){
           protein = aminoAcids['CYS'];
           renderizer.renderize(protein, type);
+          removeSelectModel();
         }
         else if(i==3){
           // protein = aminoAcids['TRP'];
-          var creatine = jsonProtein['2CRK'];
+          json = jsonProtein['2CRK'];
           protein = proteinReader.loadProtein(creatine,1);
+          addSelectModel();
           renderizer.renderize(protein, type);
+          
         }
         else if(i==4){
-          var insuline = jsonProtein['2LGB'];
+          json = jsonProtein['2LGB'];
           protein = proteinReader.loadProtein(insuline,1);
+          addSelectModel();
           renderizer.renderize(protein, type);
+          
         }
       }
     }
+  }
+
+    function modelChanged(){
+      //alert($id('modelSelected').selectedIndex+1);
+          protein = proteinReader.loadProtein(insuline,$id('modelSelected').selectedIndex+1);
+          renderizer.renderize(protein, type);
   }
 
   function webGLStart() {

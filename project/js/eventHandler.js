@@ -27,10 +27,9 @@
 	            animation.goToCenter(model.position);
 	            selectedModel = model;
 	            $id('infoAtom').style.visibility='visible';
-	            //$id('debug').innerHTML = "SELECTED ELEMENT: "+model.atom.element;
-	            $id('infoAtom').innerHTML = "Selected element: "+model.atom.element+
-	            "<br>"+"Selected name: "+model.atom.aminoacid+
-	            "<br>"+"Selected aminoAcid name: "+model.atom.name;
+	            $id('infoAtom').innerHTML = "element: "+model.atom.element+
+	            "<br>"+"name: "+model.atom.name+
+	            "<br>"+"aminoacid: "+model.atom.aminoacid;
           	}
 		}
 		EventHandler.prototype.onDragStart = function(e){
