@@ -1,14 +1,20 @@
+    // Istanza di un oggetto di tipo ProteinReader
     var proteinReader = new ProteinReader();
 
     function ProteinReader(){}
 
-     ProteinReader.prototype.loadAminoAcids = function(json){
+    /* Crea un modello 3D di un singolo amminoacido a partire dal corrispettivo json */
+    ProteinReader.prototype.loadAminoAcids = function(json){
       var protein = new Protein();
       var jsonParse = eval('('+json+')');
       var model = jsonParse["MODEL_1"];
       var strAtom = "r_";
       var i = 1;
       var j = 1;
+
+      // Parsing del json
+      
+      // Creazione degli atomi
       var atom = model[strAtom+i];
       while(atom !== undefined){
         if(atom["type"]=="ATOM"){
@@ -17,7 +23,7 @@
         i++;
         atom = model[strAtom+i];
       }
-
+      // Creazione dei legami
       for(z=1;z<i;z++){
         var conect = jsonParse["CONECT_"+z];
         for (z2=1;z2<=4;z2++){
@@ -31,6 +37,7 @@
       return protein;
     }
 
+    /* Conta i modelli di cui è disponibile il corrispettivo json */
     ProteinReader.prototype.countModels = function(jsonstr){
         var mapModels = jsonstr['MODEL'];
         var count = 0;
@@ -39,7 +46,9 @@
         return count-1;
     }
 
-     ProteinReader.prototype.loadProtein = function(jsonstr, visual){
+    /* Crea il modello di una proteina completa */
+    /* Devono essere passati il json della proteina e il tipo di visualizzazione */
+    ProteinReader.prototype.loadProtein = function(jsonstr, visual){
         var protein = new Protein();
         
         var models = jsonstr['MODEL'];
@@ -48,15 +57,18 @@
         
         var i = 1;
 
+        // Variabili temporanee per i valori dell' amminoacido
         var offset = 0;
         var lastResName = "";
         var lastResSeq = 0;
         var indexResSeq = [];
         var admitted = [];
 
+        // Liste d'appoggio per i riferimenti alle sequenze carbonio-azoto dei legami peptidici
         var peptideListN = {};
         var peptideListC = {};
 
+        /* Funzione di supporto per creare i legami dei singoli amminoacidi */
         function createBonds( lastResName, indexResSeq, admitted, offset){
             var aminoAcid = aminoAcids[lastResName];
             for(var key in aminoAcid.bonds){
@@ -83,6 +95,7 @@
             }
         }
 
+        /* Funzione di supporto per creare legami peptidici */
         function createPeptides(peptideListN, peptideListC) {
           for(var k in peptideListN){
             var peptideListNchainID = peptideListN[k];
@@ -100,7 +113,8 @@
             }
           }
         }
-
+        
+        /* Funzione di supporto per il disegno degli Hetatoms alla fine del json */
         function drawHetatm() {
             var hetatm = model['HETATM'];
             for(key in hetatm){
@@ -123,6 +137,7 @@
             }
         }
 
+        /* Funzione di supporto per il disegno dei legami non-standard presenti nella sezione finale del json */
         function drawConect(conectList){
             for(source in conectList){
                 var targetList = conectList[source];
@@ -137,7 +152,9 @@
         for (key in atoms) {
             var record = atoms[key];
 
+            // Parte relativa alla sezione ATOM del PDBe
             if(record['type'] == "ATOM"){
+                // Popolo le variabili temporanee
                 var id = record['serial'];
                 var resSeq = record['resSeq'];
                 var resName = record['resName'];
@@ -151,44 +168,45 @@
                   peptideListC[chainID] = [];
                 }
 
+                // Popola la catena peptidica
                 if ( name === "N" )
                   peptideListN[chainID].push(id); 
                 else if (name === "CA")
                   peptideListC[chainID].push(id);
                 
                 
-                // INIZIO DI UNA NUOVA CATENA DI AMINO ACIDO
+                // Inizio di una nuova catena di amminoacidi
+                // Se LASTRESNAME!="" , cerco e aggiungo i precedenti legami dell'aminoacido
                 if(resSeq !== lastResSeq){
-                    // SE IL LASTRESNAME!="" CERCO E AGGIUNGO I BOND DEL PRECEDENTE AMINOACIDO
                     if(lastResName !== ""){
                         createBonds( lastResName, indexResSeq, admitted, offset);
                     }
-
-                    // REINIZIALIZZO LE VARIABILI CON I RIFERIMENTI DELLA NUOVA CATENA
+                    // Re-inizializzo le variabili con i riferimenti alla nuova catena
                     lastResName = resName;
                     indexResSeq = [];
                     admitted = [];
                     lastResSeq = resSeq;
                     offset = id - 1;
                 }
-
+                // Alcuni atomi dell'amminoacido di base possono non esserci nella sotto-sequenza della proteina
+                // In tal caso, tengo un id relativo basato sulla proteina per verificare correttezza della struttura
                 var relativeId = id - offset;
                 indexResSeq.push(relativeId);
                 admitted.push([relativeId,name]);
                 
                 var atom = new Atom(id, element, name, x, y, z, chainID, resSeq, resName);
-                // alert(id+" "+atom.aminoacid);
                 protein.addAtom(id, atom);
             }
       }
-          // CREA I BOND PER L'ULTIMA CATENA
+          // Crea i legami per l'ultima catena
           createBonds(lastResName, indexResSeq, admitted, offset);
 
-        // drawHetatm();
-
+          // Se presenti, disegna i Connect non-standard
           if (jsonstr['CONECT'] !== undefined)
             drawConect(jsonstr['CONECT']);
           
+          // Disegna i legami peptidici
           createPeptides(peptideListN, peptideListC);
+
           return protein;
     }
