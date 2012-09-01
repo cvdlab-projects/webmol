@@ -6,7 +6,7 @@
 		function EventHandler(){
 		  this.pos = {x: 0, y: 0};
 		}
-		
+		//clearSelectionModel: Deseleziona l'atomo se ne era presente uno selezionato
 		EventHandler.prototype.clearSelectionModel = function(){
 			if(selectedModel){
 				renderizer.protein.selectedAtom = undefined;
@@ -15,7 +15,9 @@
 				$id('infoAtom').innerHTML = "";
 			}
 		}
-
+		/*onClick: gestisce l'evento di onClick del mouse, se non viene selezionato un atomo resetta la selezione
+		in caso contrario gestisce l'aniazione della camera verso l'atomo e stampa a video le sue caratteristiche
+		*/ 
 		EventHandler.prototype.onClick = function(e, model){
 			if(selectedModel || model==selectedModel){
 				this.clearSelectionModel();
@@ -35,6 +37,7 @@
 	            "<br>"+"id: "+model.atom.id;
           	}
 		}
+		//onDragStart: gestisce l'evento di dragStart del mouse settando la posizione attuale della telecamera
 		EventHandler.prototype.onDragStart = function(e){
 			var cX = e.x + canvas.width/2;
 		    var cY = e.y + canvas.height/2;
@@ -43,6 +46,7 @@
 		      y: cY
 		    };
 		}
+	  //onDragMove: gestisce l'evento di dragMove del mouse gestendo la rotazione della camera
       EventHandler.prototype.onDragMove= function(e) {
         	cX = e.x + canvas.width/2;
 		    cY = e.y + canvas.height/2;
@@ -52,11 +56,16 @@
 		      y: cY
 		    };
       }
+      //originRotation: gestisce la rotazione della camera nell'origine
       EventHandler.prototype.originRotation= function(cX,cY){
       		NScamera.mouseRotate((cX-this.pos.x)*(NScamera.distance-NScamera.minDistance+1),
 		     (cY-this.pos.y)*(NScamera.distance-NScamera.minDistance+1), cX, cY);
       	}
-      	
+      	/*onKeyDown: gestisce gli eventi di input da tasiera
+		w,a,s,d: effettuano il pan della telecamera
+		r: reset della camera nella posizione originale
+		v: mostra gli assi cartesiani nell'origine
+		*/
 		EventHandler.prototype.onKeyDown = function(e) {
 		  switch(e.key){
 		    case 'w':
@@ -86,7 +95,7 @@
 		      break;
 		  }
 		}
-
+		/*onMouseWheel: gestisce l'evento di scroll del mouse agendo sullo zoom della telecamera*/
 		EventHandler.prototype.onMouseWheel = function(e) {
 		    e.stop();
 			NScamera.mouseZoom(e.wheel);

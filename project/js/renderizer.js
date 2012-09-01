@@ -1,31 +1,37 @@
 var RenderizerType = {"ballAndStick" : 0, "vanDerWaals" : 1, "stick" : 2 , "lines" : 3, "backBone": 4 } ;
 var idMatrix = new PhiloGL.Mat4();
+
+/* Grandezza dei raggi nelle varie visualizzazioni (quando il dato non è intriseco dell'atomo\proteina) */
 var STICK_RADIUS = 0.2;
 var BALLANDSTICK_RADIUS = 0.4;
 var BACKBONE_RADIUS = 0.6;
+
+/* Impostazioni per la luce all'interno della scena */
 var LIGHT_AMBIENT = {r: 0.2, g: 0.2, b: 0.2};
 var LIGHT_DIRECTIONAL = {
     color: {r: 0.8,g: 0.8,b: 0.8},
     direction: {x: 0,y: 0,z: -1.0}
   };
+
+/* Mappa per stabilire il colore di ogni catena della proteina */
 var colorsChain = {};
 colorsChain['A'] = [0,0,1,1];
 colorsChain['B'] = [0,1,0,1];
 colorsChain['C'] = [1,0,0,1];
 colorsChain['D'] = [1,1,0,1];
 
-
-
 function Renderizer(){
   this.showAxis = false;
   this.init();
 }
 
+/* Inizializza un array per i modelli ed una mappa per raggruppare i modelli in classi di oggetti con qualità grafica uguale (qualità grafica data dal numero di approssimazione delle sfere o dei cilindri) */
 Renderizer.prototype.init = function(){
   this.models = [];
   this.objmodels = {};
 }
 
+/* Funzione per il settaggio delle luci all'interno della scena */
 Renderizer.prototype.setupLight = function(){
   var lights = scene.config.lights;
   lights.enable = true;
@@ -47,6 +53,7 @@ Renderizer.prototype.setupLight = function(){
   lights.points.push(createLightPoint(5, 10, 0, r, g, b, true));*/
 }
 
+/* Rimuove tutti i modelli dalla scena */
 Renderizer.prototype.clear = function(){
     for(i in this.models){
       scene.remove(this.models[i]);
@@ -54,11 +61,13 @@ Renderizer.prototype.clear = function(){
     this.init();
   }
 
+/* A partire dalla struttura della proteina costruisce gli oggetti della scena (costituiti da sfere e cilindri)
+fa dei precalcoli di matrici di rotazione dei cilindri e calcola la qualità degli oggetti a seconda della distanza dalla camera
+(più un oggetto è distante peggiore è la qualità) e renderizza gli oggetti nella scena */
 Renderizer.prototype.renderize = function(protein, type, setDistance){
   this.clear();
   this.protein = protein;
 
-  // DA RIMUOVERE
     if(type == RenderizerType.ballAndStick){
       for(i in protein.atoms){
         this.ballandstick_drawAtom(protein.atoms[i]);
@@ -78,7 +87,6 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
     for(i in this.models){
       scene.add(this.models[i]);
     }
-    // FINE DA RIMUOVERE
 
     if(setDistance || setDistance==undefined){
       var barycenter = this.protein.barycenter();
@@ -108,6 +116,7 @@ Renderizer.prototype.renderize = function(protein, type, setDistance){
     this.render(type);
   }
 
+/* Funzione per renderizzare un oggetto nella scena */
 Renderizer.prototype.renderObject = function(obj, position, color, scale, matrix) {
       var view = camera.view, projection = camera.projection;
 
@@ -136,9 +145,9 @@ Renderizer.prototype.renderObject = function(obj, position, color, scale, matrix
       this.numobjects++;
 }
 
+/* Viene invocata ogni qual volta debba essere ridisegnata la scena, pulisce lo schermo, disegna eventualmente gli assi
+e la backbone ed infine renderizza tutta la scena */
 Renderizer.prototype.render = function(type,color){
-  
-
   if(color)
     gl.clearColor(hexToR(color)/255.0,hexToG(color)/255.0,hexToB(color)/255.0,1.0);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -164,6 +173,9 @@ gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   //$id('objects').innerHTML = this.numobjects;
 }
 
+/* Non viene utilizzato scene.render di PhiloGL ma è stata riscritta la funzione di render per permettere
+di disegnare la qualità degli oggetti dei modelli sempre dinamicamente rispetto alla distanza con la camera e per permettere
+di nascondere gli oggetti che non sono all'interno della frustum della camera attraverso la tecnica della frustumCulling */
 Renderizer.prototype.renderScene = function(){
     scene.beforeRender(program);
     // Method for pseudo-instancing (set buffer once per object to render)
@@ -184,6 +196,7 @@ Renderizer.prototype.renderScene = function(){
     }
 }
 
+/* Crea tutti gli oggetti della scena e li memorizza all'interno della mappa objmodels */
 Renderizer.prototype.createScene = function(){
     function getAtomRadius(atom){
         if(type == RenderizerType.ballAndStick)
@@ -235,6 +248,7 @@ Renderizer.prototype.createScene = function(){
     }
 }
 
+/* Funzione che ritorno l'oggetto ad una determinata qualità in funzione del rapporto tra distanza e camera */
 Renderizer.prototype.getObject = function(objName, distrad){
   for(var i in this.distObj){
     var arr = this.distObj[i];
@@ -254,6 +268,7 @@ Renderizer.prototype.getObject = function(objName, distrad){
   return [objname, obj];
 }
 
+/* Funzione per la costruzione della sfera a partire da posizione, colore, raggio e selezione oggetto */
 Renderizer.prototype.sphere = function(position, color, radius, selected){
   if(culling.isSphereInFrustum(position, radius)){
       var scale = [radius, radius, radius];
@@ -269,6 +284,7 @@ Renderizer.prototype.sphere = function(position, color, radius, selected){
    }
 }
 
+/* Funzione per la costruzione dei legami a partire da punto1, punto2, matrice di rotazione, colore e raggio */ 
 Renderizer.prototype.bond = function (v1, v2, matrix, color, radius){
     var midpoint = v1.add(v2).scale(0.5);
     var sub = v1.sub(v2);
@@ -287,6 +303,8 @@ Renderizer.prototype.bond = function (v1, v2, matrix, color, radius){
     }      
 }
 
+/* Funzione che calcola tre matrici di rotazioni dei cilindri a partire dai due punti per cui passa il cilindro.
+Una matrice è per la rotazione del cilindro e le altre due sono per la rotazione dei cilindri che formano il cilindro iniziale (utile per quando rappresentiamo un unico bond con due cilindri di colore diverso) */
 Renderizer.prototype.cylinderMatrix = function(v1, v2){
   var midpoint = v1.add(v2).scale(0.5);
   var sub = v1.sub(v2);
@@ -303,6 +321,7 @@ Renderizer.prototype.cylinderMatrix = function(v1, v2){
   return matrix;
 }
 
+/* Funzione che effettua un precalcolo delle matrici di rotazione dei cilindri durante la costruzione della scena (non ad ogni redraw) */
 Renderizer.prototype.precalculateMatrix = function(){
   for(var i in this.protein.bonds) {
     var bond = this.protein.bonds[i];
@@ -320,6 +339,7 @@ Renderizer.prototype.precalculateMatrix = function(){
   }
 }
 
+/* Funzione primitiva per disegnare una linea dati punto1, punto2, colore, spessore che se non definito è 1 */
 Renderizer.prototype.drawLine = function(p1, p2, color, width){
   program.setBuffers({
     'line': {
@@ -344,6 +364,7 @@ Renderizer.prototype.drawLine = function(p1, p2, color, width){
     program.setUniform('enableLights', true);
 }
 
+/* Funzione che disegna la backbone della proteina */
 Renderizer.prototype.drawBackBone = function(){
   var atomsChain = this.protein.getAtomsWithKeyChain();
   for(var key in atomsChain){
@@ -394,6 +415,7 @@ Renderizer.prototype.drawBackBone = function(){
   }
 }
 
+/* Funzione che disegna gli assi cartesiani */
 Renderizer.prototype.drawAxis = function(){
 
   if(this.showAxis){
@@ -411,8 +433,7 @@ Renderizer.prototype.drawAxis = function(){
 }
 
 
-// LINES VISUALIZATION
-
+/* Funzione che serve a disegnare la proteina nella modalità Lines (solo linee) */
 Renderizer.prototype.lines_drawBond = function(bond) {
   
     var atom1 = this.protein.atoms[bond.idSource];
@@ -426,10 +447,6 @@ Renderizer.prototype.lines_drawBond = function(bond) {
     this.drawLine(v1, midpoint, atom1.color);
     this.drawLine(midpoint, v2, atom2.color);
 }
-
-// LINES VISUALIZATION END
-
-
 
 
 // Funzioni del vecchio Renderizer

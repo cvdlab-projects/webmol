@@ -1,3 +1,4 @@
+
 var NScamera = new Object();
 
 NScamera.rot = new PhiloGL.Quat(0,0,0,1);
@@ -12,7 +13,8 @@ NScamera.minDistance = 0.1;
 NScamera.maxDistance = 2000;
 NScamera.stepPan = 10;
 
-// Per utilizzare la camera al meglio bisogna tunare i parametri minDistance, maxDistance, distance, center, stepPan
+// Per utilizzare la camera al meglio bisogna tunare i parametri minDistance, 
+//maxDistance, distance, center, stepPan
 // a seconda di cosa andiamo a disegnare sulla scena
 
 NScamera.update = function(){
@@ -33,24 +35,25 @@ NScamera.update = function(){
 		renderizer.render(type);
 	}
 }
-
+//setTarget: imposta il target della telecamera con quello passato per parametro(lookAt)
 NScamera.setTarget = function(target) {
 	NScamera.center = new PhiloGL.Vec3(target[0], target[1], target[2]);
 	NScamera.initCenter = new PhiloGL.Vec3(target[0], target[1], target[2]);
 }
-
+//setDistance: imposta la distanza della camera dal suo target, inoltre setta la maxDistance e la minDIstance
 NScamera.setDistance = function(distance) {
 	NScamera.distance = distance;
 	NScamera.maxDistance = distance*4;
 	NScamera.initDistance = distance;
 }
-
+//reset: ferma la rotazione della camera
 NScamera.reset = function(){
 	NScamera.velocityX = 0;
 	NScamera.velocityY = 0;
 	NScamera.velocityZ = 0;
 }
 
+// Riempie una matrice in input con i dati relativi alla camera allo stato attuale
 NScamera.feed = function(mat) {
   var pos = new PhiloGL.Vec3(0,0,1);
   var up = new PhiloGL.Vec3(0,1,0);
@@ -61,16 +64,18 @@ NScamera.feed = function(mat) {
   mat.lookAt(pos, this.center, up);
 }
 
+// Serve a gestire lo spostamento del centro della camera
 NScamera.mousePan = function(dx,dy) {
   var panScale = Math.sqrt(this.distance *0.0001);
   this.pan(-dx*panScale, -dy*panScale);
 }
-
+// Sposta il centro della camera
 NScamera.pan = function(dx,dy) {
   var v = new PhiloGL.Vec3(dx, dy, 0);
   this.center.$add(quat_multiplyVec3(this.rot, v));
 }
 
+// Serve a gestire la rotazione della camera attraverso l'uso di quaternioni
 NScamera.mouseRotate = function(dx,dy,mx,my) {
 	var u = new PhiloGL.Vec3(0,0,this.sensibility * this.distance);
 	var rho = Math.abs((gl.canvas.width / 2.0) - mx) / (gl.canvas.height/2.0);
@@ -94,6 +99,7 @@ NScamera.mouseRotate = function(dx,dy,mx,my) {
 	this.velocityZ += vec3_angle(u,vz)*xSign * (my > gl.canvas.height / 2 ? -1 : 1);
 }
 
+//mouseZoom: effettua uno zoom della telecamera aumentando o diminuendo la distanza dal target
 NScamera.mouseZoom = function(delta) {
 	this.distance = Math.max(this.minDistance, this.distance - delta * Math.sqrt(this.distance * .02));
 	this.distance = Math.min(this.maxDistance, this.distance);

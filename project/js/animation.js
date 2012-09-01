@@ -1,9 +1,13 @@
+	/* Classe per la gestione delle animazioni della camera */
+
+	/* Variabili per la durata delle animazioni */
 	var GOTODISTANCE_DURATION = 1000;
 	var GOTOROTATION_DURATION = 500;
 	var GOTOCENTER_DURATION = 1000;
 
 	function Animation(){}
 
+	/* Animazione per portare la distanza della camera da un punto _to ad un punto _from */
 	Animation.prototype.goToDistance = function(_to, _from){
 		  var fx = new PhiloGL.Fx({
 		    duration: GOTODISTANCE_DURATION,
@@ -19,6 +23,7 @@
               to: _from });
 		}
 
+	/* Animazione per ruotare la camera */
 	  Animation.prototype.goToRotationQuatCoord = function(_to, _coord){
 	    var fx = new PhiloGL.Fx({
 	        duration: GOTOROTATION_DURATION,
@@ -35,6 +40,7 @@
 	        coord: _coord });
 	   }
 
+	/* Animazione per spostare il centro della camera alla coordinata _to dove (_coord = 0 (per x), 1 (per y), 2 (per z) ) */
 	  Animation.prototype.goToCenterCoord = function(_to, _coord){
 	    var fx = new PhiloGL.Fx({
 	        duration: GOTOCENTER_DURATION,
@@ -51,6 +57,7 @@
 	        coord: _coord });
 	   }
 
+	/* Funzione per resettare la rotazione della camera con un'animazione */
 	  Animation.prototype.resetRotation = function(){
 		this.goToRotationQuatCoord(0, 0);
 	    this.goToRotationQuatCoord(0, 1);
@@ -58,6 +65,7 @@
 	    this.goToRotationQuatCoord(1, 3);
 	  }
 
+	/* Funzione per spostare il centro della camera con un'animazione al punto vec */
 	  Animation.prototype.goToCenter = function(vec){
 		this.goToCenterCoord(vec.x, 0);
 	    this.goToCenterCoord(vec.y, 1);

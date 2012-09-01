@@ -1,10 +1,20 @@
+  /*
+    Interazione tra le classi del progetto:
+    index interagisce con la camera (per gestire il resize della windows e l'aggiornamento della camera al draw), con proteinReader (per caricare la proteina), con renderizer (per renderizzare la scena) ed eventHanlder (per impostare la gestione degli eventi della tastiera e del mouse)
+    eventHandler interagisce con animation per animare la camera in caso di reset e con la camera stessa per lo zoom, pan e rotate
+    camera interagisce con renderizer per il redraw della scena, con frustumCulling per l'aggiornamento dei piani della frustum
+    proteinReader interagisce con atoms e protein poichè costruisce una struttura di proteine data da lista di atomi e legami e utilizza la mappa degli amminoacidi presente in jsonAminoAcids per trarre informazioni sui legami degli amminoacidi nella proteina
+    renderizer interagisce direttamente con PhiloGL e data una proteina è in grado di renderizzarla nella scena, di gestire le luci e le trasformazioni degli oggetti
+  */
+
+
   var $id = function(d) { return document.getElementById(d); };
   var eventHandler = new EventHandler();
   var renderizer = new Renderizer();
   var originRotationOn=true;
   var type = RenderizerType.ballAndStick;
 
-
+  /* Funzione che permette di reimpostare la camera e il viewport quando viene ridimensionata la finestra */
   function resizeWindow()
   {
   var cont=canvas.parentNode;
@@ -19,10 +29,12 @@
     renderizer.renderize(protein, type, false);
   }
   
+  // Invocata sulla spunta della visualizzazione della backbone (disegna o rimuove la backbone con un redraw)
   function backboneChanged(){
     renderizer.render(type);
   }
 
+  // Invocata quando viene cambiato il tipo di renderizzazione (ridisegna la scena col nuovo tipo di renderizzazione)
   function renderizerTypeChanged(){
     var sel = $id('renderizerType').options;
     for(i=0; i<sel.length; i++){
@@ -32,6 +44,8 @@
       }
     }
   }
+
+  // Gestisce la rimozione dei modelli della proteina dalla combobox
   function removeSelectModel(){
     elSel = document.getElementById('modelSelected');
       var y;
@@ -39,6 +53,8 @@
           elSel.remove(y);
       }
   }
+
+  // Gestisce l'aggiunta dei modelli della proteina dalla combobox
   function addSelectModel(){
     removeSelectModel();
     for (i=1; i<=proteinReader.countModels(json);i++){
@@ -47,8 +63,9 @@
       elOptNew.value = 'model_' + i;
       elSel.add(elOptNew, null);
     }
-    
   }
+
+  // Invocata quando viene cambiata la proteina da visualizzare
   function proteinChanged(){
      NScamera.reset();
      var sel = $id('proteinSelected').options;
@@ -88,20 +105,21 @@
     }
   }
 
+  // Invocata quando viene cambiato il modello della proteina da visualizzare
     function modelChanged(){
       //alert($id('modelSelected').selectedIndex+1);
           protein = proteinReader.loadProtein(insuline,$id('modelSelected').selectedIndex+1);
           renderizer.renderize(protein, type);
   }
 
-
+  // Invocata quando viene cambiato il colore dello sfondo
   function changeBackColor(){
  
     renderizer.render(type,$id('colorId').value);
     document.body.style.background=$id('colorId').value;
   }
 
-
+  // Inizializza l'ambiente WebGL e PhiloGL impostando shaders, camera, eventi etc.
   function webGLStart() {
 var dm = document.getElementById('infoAtom'); 
   dm.addEventListener('dragstart',drag_start,false); 

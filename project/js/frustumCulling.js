@@ -4,6 +4,7 @@ function FrustumCulling(){
 	this.updatePlanes();
 }
 
+/* Crea un piano a partire da tre punti nello spazio. Restituisce un array di quattro componenti [A,B,C,D] dove Ax + By + Cz + D = 0 */
 FrustumCulling.prototype.createPlane = function(p0, p1, p2) {
 	var v = p1.sub(p0);
 	var u = p2.sub(p0);
@@ -17,10 +18,12 @@ FrustumCulling.prototype.createPlane = function(p0, p1, p2) {
 	return [A,B,C,D];
 }
 
+/* Controlla che un punto sia all'interno del piano, torna true o false */
 FrustumCulling.prototype.isPointInFrustum = function(point){
 	return this.isSphereInFrustum(point, 0);
 }
 
+/* Controlla che una sfera sia all'interno del piano (dato il centro ed il raggio della sfera), torna true o false */
 FrustumCulling.prototype.isSphereInFrustum = function(point, radius){
 	for(var key in this.planes){
 		var plane = this.planes[key];
@@ -32,6 +35,7 @@ FrustumCulling.prototype.isSphereInFrustum = function(point, radius){
 	return true;
 }
 
+/* Calcola la distanza di un punto dal piano */
 FrustumCulling.prototype.distToPlane = function(plane, point) {
 	var A = plane[0], B = plane[1], C = plane[2], D = plane[3];
 	var rx = point.x, ry = point.y, rz = point.z;
@@ -41,6 +45,8 @@ FrustumCulling.prototype.distToPlane = function(plane, point) {
 	return dist;
 }
 
+/* Aggiorna i sei piani che identificano la frustum della camera (volume che determina lo spazio in cui gli oggetti vengono visualizzati)
+   imposta una variabile di classe planes che è un mappa contenente i sei piani della frustum */
 FrustumCulling.prototype.updatePlanes = function(p, l, u){
 	var dir,nc,fc,X,Y,Z;
 

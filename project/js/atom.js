@@ -1,4 +1,5 @@
-  
+//Costruttori per atom e bond e mappe di utilità
+//definizione della colormap per colorare i diversi tipi di atomi(R,G,B,opacity) 
 colorMap = {}
 colorMap["H"] = [1, 1, 1, 1];
 colorMap["HE"] = [0.85098, 1, 1, 1];
@@ -109,7 +110,7 @@ colorMap["SG"] = [0.85098, 0, 0.270588, 1];
 colorMap["BH"] = [0.878431, 0, 0.219608, 1];
 colorMap["HS"] = [0.901961, 0, 0.180392, 1];
 colorMap["MT"] = [0.921569, 0, 0.14902, 1];
-
+//definizione della mappa vanDerWaalsRadius per associare ad ogni tipo di atomo un raggio di vanDerWaals diverso 
 vanDerWaalsRadius = {}
 vanDerWaalsRadius["AG"] = 1.72;
 vanDerWaalsRadius["AL"] = 1.84;
@@ -164,7 +165,11 @@ vanDerWaalsRadius["U"] = 1.86;
 vanDerWaalsRadius["XE"] = 2.16;
 vanDerWaalsRadius["ZN"] = 1.39;
 
-  // Atom Class
+  /* Atom: costruttore dell'oggetto atomo
+  input: id=id dell'atomo nella proteina, element = tipo di elemento, name = nome dell'atomo, 
+  xyz = posizione spaziale dell'atomo  , chainID = id dell'atomo nella catena, resSeq = numero della sequenza nella proteina, 
+  resName = nome del residuo
+  */
 
   function Atom(id, element, name, x, y, z, chainID, resSeq, resName){
     
@@ -181,8 +186,9 @@ vanDerWaalsRadius["ZN"] = 1.39;
     this.vanDerWaalsRadius = vanDerWaalsRadius[element.toUpperCase()];
   }
 
-  // Bond Class
-
+  /* Bond: costruttore dell'oggetto bond/legame
+  input: idS = id dell'atomo sorgente, idT = id dell'atomo destinazione, nameS = name dell'atomo sorgente, nameT = name dell'atomo destinazione,bondT = tipo di legame
+*/
   function Bond(idS, idT, nameS, nameT, bondT){
     this.idSource = idS;
     this.idTarget = idT;
