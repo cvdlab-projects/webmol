@@ -14,6 +14,47 @@
   var originRotationOn=true;
   var type = RenderizerType.ballAndStick;
 
+  function httpGet(theUrl)
+  {
+    $('#spinner').show();
+
+    xmlHttp = new XMLHttpRequest(); 
+    
+    xmlHttp.open("GET", theUrl, true );
+
+    xmlHttp.onreadystatechange = ProcessRequest;
+    xmlHttp.send(null);
+  }
+
+function ProcessRequest() 
+{
+    if ( xmlHttp.readyState == 4 && xmlHttp.status == 200 ) 
+    {
+        if ( xmlHttp.responseText == "Not found" ) 
+        {
+             alert("Protein Not Found");
+        }
+        else
+        {
+            json = eval('('+xmlHttp.responseText+')');
+            protein = proteinReader.loadProtein(json,1);
+            addSelectModel();
+            renderizer.renderize(protein, type);
+        }     
+        $('#spinner').hide();
+               
+    } else if ( xmlHttp.readyState == 4 && xmlHttp.status != 200 )  {
+      $('#spinner').hide();
+      alert("Protein Not Found. Error Code: "+xmlHttp.status);
+    }
+  }
+
+  function downloadProtein(){
+    var site = "http://dokkis.altervista.org/";
+    var url = site + document.getElementById('idProtein').value + ".json";
+    httpGet(url);
+  }
+
   /* Funzione che permette di reimpostare la camera e il viewport quando viene ridimensionata la finestra */
   function resizeWindow()
   {
