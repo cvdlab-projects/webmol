@@ -67,6 +67,9 @@
 		v: mostra gli assi cartesiani nell'origine
 		*/
 		EventHandler.prototype.onKeyDown = function(e) {
+		  if($("*:focus").attr("id")=="idProtein")
+		  	return;
+
 		  switch(e.key){
 		    case 'w':
 		      NScamera.mousePan(0,NScamera.stepPan);
@@ -95,6 +98,7 @@
 		      break;
 		  }
 		}
+
 		/*onMouseWheel: gestisce l'evento di scroll del mouse agendo sullo zoom della telecamera*/
 		EventHandler.prototype.onMouseWheel = function(e) {
 		    e.stop();
