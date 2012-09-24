@@ -135,7 +135,7 @@ function ProcessRequest()
   // Invocata quando viene cambiato il modello della proteina da visualizzare
     function modelChanged(){
       //alert($id('modelSelected').selectedIndex+1);
-          protein = proteinReader.loadProtein(insuline,$id('modelSelected').selectedIndex+1);
+          protein = proteinReader.loadProtein(protein, $id('modelSelected').selectedIndex+1);
           renderizer.renderize(protein, type);
   }
 
