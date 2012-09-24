@@ -127,21 +127,6 @@ function ProcessRequest()
           renderizer.renderize(protein, type);
           removeSelectModel();
         }
-        else if(i==3){
-          // protein = aminoAcids['TRP'];
-          json = jsonProtein['2CRK'];
-          protein = proteinReader.loadProtein(creatine,1);
-          addSelectModel();
-          renderizer.renderize(protein, type);
-          
-        }
-        else if(i==4){
-          json = jsonProtein['2LGB'];
-          protein = proteinReader.loadProtein(insuline,1);
-          addSelectModel();
-          renderizer.renderize(protein, type);
-          
-        }
       }
     }
   }

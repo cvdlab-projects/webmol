@@ -99,6 +99,11 @@ window.onresize = resizeWindow;
   <p class="centeredImage">
   <img src="resources/logoscritta.png" alt="WebMol logo" height="65%"/>
 </p>
+
+<input type="text" id="idProtein" />
+<button type="button" onclick="downloadProtein()">Get Protein</button>
+
+
 Visualization:
 <select id="renderizerType" onChange="renderizerTypeChanged()">
   <option value="ballandstick">Ball and Stick</option>
@@ -113,8 +118,6 @@ Amino Acids:
   <option value="Alanine">Alanine</option>
   <option value="Arginine">Arginine</option>
   <option value="Cysteine">Cysteine</option>
-  <option value="Creatina">Creatina</option>
-  <option value="Insuline">Insuline</option>
 </select>
 
 Models:
@@ -132,8 +135,6 @@ Models:
 <input type="text" id="colorId" value="#000000" onclick="colorPicker(event)" style="margin-top:5px;"/>
 <input type="button" value="Change color" onclick="changeBackColor();">
 
-<input type="text" id="idProtein" />
-<button type="button" onclick="downloadProtein()">Get Protein</button>
 
 </div>
 <div id="divCanvas" style="float:left;">
