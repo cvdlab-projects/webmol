@@ -49,8 +49,9 @@ function ProcessRequest()
     }
   }
 
+  // Funzion per scaricare le proteine, cambiare la variabile site per puntare ad altri repository
   function downloadProtein(){
-    var site = "http://dokkis.altervista.org/";
+    var site = "https://raw.github.com/cvdlab-bio/webmol/master/proteine/";
     var url = site + document.getElementById('idProtein').value + ".json";
     httpGet(url);
   }
