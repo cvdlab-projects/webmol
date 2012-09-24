@@ -36,8 +36,8 @@ function ProcessRequest()
         }
         else
         {
-            json = eval('('+xmlHttp.responseText+')');
-            protein = proteinReader.loadProtein(json,1);
+            jsonprotein = eval('('+xmlHttp.responseText+')');
+            protein = proteinReader.loadProtein(jsonprotein,1);
             addSelectModel();
             renderizer.renderize(protein, type);
         }     
@@ -135,7 +135,7 @@ function ProcessRequest()
   // Invocata quando viene cambiato il modello della proteina da visualizzare
     function modelChanged(){
       //alert($id('modelSelected').selectedIndex+1);
-          protein = proteinReader.loadProtein(protein, $id('modelSelected').selectedIndex+1);
+          protein = proteinReader.loadProtein(jsonprotein, $id('modelSelected').selectedIndex+1);
           renderizer.renderize(protein, type);
   }
 
