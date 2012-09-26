@@ -9,11 +9,11 @@ The application is designed to be accessible from Internet and it's compatible w
 It can download the required proteins via a REST interface provided by WebPdb.
 
 ## Viewer Type
-Ball and stick
-Stick
-Van der Waals Spheres
-Lines
-Backbone (alone or superimposed)
+* Ball and stick
+* Stick
+* Van der Waals Spheres
+* Lines
+* Backbone (alone or superimposed)
 
 ## Development Team
 Antonio Gallo
